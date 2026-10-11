@@ -32,40 +32,33 @@ struct CelebrationOverlay: View {
     }
 }
 
-/// Paper confetti in the theme's colors, drawn on a canvas.
+/// Paper confetti in the theme's colors: plain shapes, each animated from start to end.
 private struct ConfettiView: View {
     let size: Celebration.Size
     let colors: [Color]
-    @State private var start = Date.now
     @State private var pieces: [Piece] = []
 
-    private struct Piece {
-        var x, y, vx, vy, spin, width, height: Double
-        var color: Color
+    fileprivate struct Piece: Identifiable {
+        let id = UUID()
+        let start: CGPoint
+        let end: CGPoint
+        let spin: Double
+        let width: Double
+        let height: Double
+        let color: Color
+        let falls: Bool
     }
 
     var body: some View {
-        let duration = CelebrationOverlay.duration(for: size)
-        TimelineView(.animation) { timeline in
-            Canvas { context, canvas in
-                let t = timeline.date.timeIntervalSince(start)
-                guard t < duration else { return }
-                // Fades over the last 40%.
-                let fade = min(1, max(0, (duration - t) / (duration * 0.4)))
-                for piece in pieces {
-                    var note = context
-                    note.opacity = fade
-                    note.translateBy(x: piece.x * canvas.width + piece.vx * t,
-                                     y: piece.y * canvas.height + piece.vy * t + 0.5 * 1400 * t * t)
-                    note.rotate(by: .radians(piece.spin * t))
-                    let rect = CGRect(x: -piece.width / 2, y: -piece.height / 2, width: piece.width, height: piece.height)
-                    note.fill(Path(rect), with: .color(piece.color))
+        GeometryReader { proxy in
+            ZStack {
+                ForEach(pieces) { piece in
+                    ConfettiPiece(piece: piece, duration: CelebrationOverlay.duration(for: size))
                 }
             }
-        }
-        .onAppear {
-            start = .now
-            pieces = (0..<count).map { _ in makePiece() }
+            .onAppear {
+                pieces = (0..<count).map { _ in makePiece(in: proxy.size) }
+            }
         }
     }
 
@@ -77,23 +70,51 @@ private struct ConfettiView: View {
         }
     }
 
-    private func makePiece() -> Piece {
+    private func makePiece(in area: CGSize) -> Piece {
         let color = colors.randomElement() ?? .orange
+        let width = Double.random(in: 7...12)
+        let height = Double.random(in: 9...16)
         switch size {
         case .small, .medium:
-            // A burst up from the bottom, where the banner sits.
-            let power = size == .small ? 0.7 : 1.0
-            return Piece(x: 0.5 + .random(in: -0.08...0.08), y: 0.85,
-                         vx: .random(in: -420...420) * power, vy: .random(in: -1300 ... -700) * power,
-                         spin: .random(in: -12...12), width: .random(in: 6...11), height: .random(in: 8...14),
-                         color: color)
+            // A burst up and out from the bottom, where the banner sits.
+            let power = size == .small ? 0.6 : 1.0
+            let start = CGPoint(x: area.width * (0.5 + .random(in: -0.06...0.06)), y: area.height * 0.85)
+            let end = CGPoint(x: start.x + area.width * .random(in: -0.5...0.5) * power,
+                              y: start.y - area.height * .random(in: 0.3...0.75) * power)
+            return Piece(start: start, end: end, spin: .random(in: -9...9),
+                         width: width, height: height, color: color, falls: false)
         case .big, .clearBoard:
-            // A shower across the whole screen.
-            return Piece(x: .random(in: 0...1), y: .random(in: -0.15...0),
-                         vx: .random(in: -120...120), vy: .random(in: 0...350),
-                         spin: .random(in: -10...10), width: .random(in: 7...12), height: .random(in: 9...16),
-                         color: color)
+            // A shower down the whole screen.
+            let x = area.width * .random(in: 0...1)
+            let start = CGPoint(x: x, y: -area.height * .random(in: 0...0.25))
+            let end = CGPoint(x: x + .random(in: -80...80), y: area.height * .random(in: 0.7...1.1))
+            return Piece(start: start, end: end, spin: .random(in: -9...9),
+                         width: width, height: height, color: color, falls: true)
         }
+    }
+}
+
+private struct ConfettiPiece: View {
+    let piece: ConfettiView.Piece
+    let duration: Double
+    @State private var launched = false
+
+    var body: some View {
+        Rectangle()
+            .fill(piece.color)
+            .frame(width: piece.width, height: piece.height)
+            .animation(piece.falls ? .easeIn(duration: duration) : .easeOut(duration: duration)) {
+                $0.rotationEffect(.radians(launched ? piece.spin : 0))
+                    .position(launched ? piece.end : piece.start)
+            }
+            // Holds full color, then fades over the last 40%.
+            .animation(.easeIn(duration: duration * 0.4).delay(duration * 0.6)) {
+                $0.opacity(launched ? 0 : 1)
+            }
+            .task {
+                // After the first frame, so the move animates from the start point.
+                launched = true
+            }
     }
 }
 

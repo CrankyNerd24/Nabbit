@@ -104,6 +104,7 @@ struct HomeView: View {
                 if let celebration {
                     CelebrationOverlay(celebration: celebration, theme: theme)
                         .id(celebration.id)
+                        .transition(.identity)
                 }
             }
             .task(id: celebration?.id) {
