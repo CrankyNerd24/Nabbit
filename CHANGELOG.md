@@ -5,6 +5,9 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+- Home now opens on the mic and the verb notes, with Today and Coming up
+  right below them, then Again? and Wins today
+
 - New, higher-contrast themes: Primary (now the default), Midnight, and
   Retro join Slate and Berry, with clearly different colors for the
   verb, who-or-what, and when notes. Ember, Workshop, and Forest are

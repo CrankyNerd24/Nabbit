@@ -54,12 +54,6 @@ struct HomeView: View {
         NavigationStack(path: $path) {
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
-                    TodayList(reminders: open, theme: theme,
-                              onAction: { act($1, on: $0) }, onRemove: remove)
-                    if let offer = hotKeyOffer {
-                        hotKeyCallout(offer)
-                            .transition(.opacity.combined(with: .move(edge: .top)))
-                    }
                     MicButton(theme: theme,
                               hints: verbs.map(\.title) + things.map(\.name),
                               onHeard: heard)
@@ -116,6 +110,12 @@ struct HomeView: View {
                                     }
                                 }
                         }
+                    }
+                    TodayList(reminders: open, theme: theme,
+                              onAction: { act($1, on: $0) }, onRemove: remove)
+                    if let offer = hotKeyOffer {
+                        hotKeyCallout(offer)
+                            .transition(.opacity.combined(with: .move(edge: .top)))
                     }
                     if !hotKeys.isEmpty {
                         againStrip
