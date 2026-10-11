@@ -4,7 +4,6 @@ import SwiftUI
 struct HomeView: View {
     @AppStorage(Theme.storageKey, store: .nabbit) private var themeID = Theme.ember.id
     @Environment(\.modelContext) private var context
-    @Query(HomeView.recentReminders) private var recent: [Reminder]
     @Query(filter: #Predicate<Reminder> { $0.completedAt == nil }, sort: \Reminder.dueDate, animation: .snappy)
     private var open: [Reminder]
     @Query(HomeView.recentlyDone) private var recentlyDone: [Reminder]
@@ -17,12 +16,6 @@ struct HomeView: View {
     @State private var showingSettings = false
 
     private var theme: Theme { Theme.named(themeID) }
-
-    private static var recentReminders: FetchDescriptor<Reminder> {
-        var descriptor = FetchDescriptor<Reminder>(sortBy: [SortDescriptor(\.createdAt, order: .reverse)])
-        descriptor.fetchLimit = 30
-        return descriptor
-    }
 
     private static var recentlyDone: FetchDescriptor<Reminder> {
         var descriptor = FetchDescriptor<Reminder>(predicate: #Predicate { $0.completedAt != nil },
@@ -39,14 +32,16 @@ struct HomeView: View {
             .sorted { ($0.completedAt ?? .distantPast) > ($1.completedAt ?? .distantPast) }
     }
 
-    /// The latest distinct verb and thing pairs, for one-tap repeats.
-    private var againItems: [AgainItem] {
-        var seen = Set<AgainItem>()
-        return recent
-            .map { AgainItem(verb: $0.verb, thing: $0.thing) }
-            .filter { seen.insert($0).inserted }
-            .prefix(4)
-            .map { $0 }
+    /// Hot keys the person said yes to, most used first.
+    private var hotKeys: [Thing] {
+        things.filter(\.hotKey).sorted { $0.useCount > $1.useCount }
+    }
+
+    /// The most used combination that's earned a hot key offer and hasn't had one.
+    private var hotKeyOffer: Thing? {
+        things
+            .filter { $0.useCount >= Thing.hotKeyThreshold && !$0.hotKey && !$0.hotKeyOffered }
+            .max { $0.useCount < $1.useCount }
     }
 
     var body: some View {
@@ -55,6 +50,10 @@ struct HomeView: View {
                 VStack(alignment: .leading, spacing: 20) {
                     TodayList(reminders: open, theme: theme,
                               onAction: { act($1, on: $0) }, onRemove: remove)
+                    if let offer = hotKeyOffer {
+                        hotKeyCallout(offer)
+                            .transition(.opacity.combined(with: .move(edge: .top)))
+                    }
                     MicButton(theme: theme,
                               hints: Verb.allCases.map(\.title) + things.map(\.name),
                               onHeard: heard)
@@ -68,7 +67,7 @@ struct HomeView: View {
                             .buttonStyle(NoteButtonStyle())
                         }
                     }
-                    if !againItems.isEmpty {
+                    if !hotKeys.isEmpty {
                         againStrip
                     }
                     if !winsToday.isEmpty {
@@ -235,18 +234,65 @@ struct HomeView: View {
                 .font(.headline)
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 10) {
-                    ForEach(againItems, id: \.self) { item in
+                    ForEach(hotKeys) { thing in
                         Button {
-                            path.append(.when(item.verb, thing: item.thing))
+                            path.append(.when(thing.verb, thing: thing.name))
                         } label: {
-                            StickyNote(text: "\(item.verb.title) \(item.thing)", fill: theme.tap2, compact: true)
+                            StickyNote(text: "\(thing.verb.title) \(thing.name)", fill: theme.tap2, compact: true)
                         }
                         .buttonStyle(NoteButtonStyle())
+                        .contextMenu {
+                            Button("Remove hot key", systemImage: "minus.circle") {
+                                withAnimation { thing.hotKey = false }
+                                try? context.save()
+                            }
+                        }
                     }
                 }
                 .padding(.vertical, 4)
             }
         }
+    }
+
+    /// Offered once per combination after it's been made three times. Yes pins it to
+    /// Again?; no means it's never asked about again.
+    private func hotKeyCallout(_ thing: Thing) -> some View {
+        let fill = theme.tap2
+        return VStack(alignment: .leading, spacing: 12) {
+            Text("You've added \(thing.verb.title) \(thing.name) \(thing.useCount) times. Want a hot key for it?")
+                .font(.headline)
+                .fixedSize(horizontal: false, vertical: true)
+            HStack(spacing: 10) {
+                Button {
+                    withAnimation {
+                        thing.hotKey = true
+                        thing.hotKeyOffered = true
+                    }
+                    try? context.save()
+                } label: {
+                    Text("Add hot key")
+                        .font(.headline)
+                        .foregroundStyle(theme.done.text.color)
+                        .frame(maxWidth: .infinity, minHeight: 44)
+                        .background(theme.done.color, in: .rect(cornerRadius: 8))
+                }
+                Button {
+                    withAnimation { thing.hotKeyOffered = true }
+                    try? context.save()
+                } label: {
+                    Text("No thanks")
+                        .font(.headline)
+                        .frame(maxWidth: .infinity, minHeight: 44)
+                        .overlay(RoundedRectangle(cornerRadius: 8).stroke(fill.text.color, lineWidth: 2))
+                        .contentShape(.rect)
+                }
+            }
+            .buttonStyle(NoteButtonStyle())
+        }
+        .foregroundStyle(fill.text.color)
+        .padding(16)
+        .background(fill.color, in: .rect(cornerRadius: 6))
+        .shadow(color: .black.opacity(0.12), radius: 2, y: 1)
     }
 
     /// Small crumpled notes for what's done today.
@@ -304,11 +350,6 @@ private struct Banner: Identifiable {
     let id = UUID()
     let text: String
     var undo: (() -> Void)? = nil
-}
-
-private struct AgainItem: Hashable {
-    let verb: Verb
-    let thing: String
 }
 
 #Preview {

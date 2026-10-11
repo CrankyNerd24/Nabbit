@@ -10,6 +10,13 @@ final class Thing {
     var useCount: Int
     var lastUsed: Date?
     var createdAt: Date
+    /// Pinned to Again? as a one-tap repeat. Only ever set by the person, after an offer.
+    var hotKey: Bool = false
+    /// The hot key offer has been shown, so it isn't asked twice.
+    var hotKeyOffered: Bool = false
+
+    /// Uses before a hot key is offered.
+    static let hotKeyThreshold = 3
 
     var verb: Verb { Verb(rawValue: verbRaw) ?? .call }
 

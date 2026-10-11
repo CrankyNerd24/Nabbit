@@ -5,6 +5,11 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+- Again? now holds only hot keys you ask for. After you've made the same
+  reminder three times, Nabbit offers one once; say yes to pin it, or no
+  and it won't ask about that one again. Press and hold a hot key to
+  remove it
+
 - Again? notes and Wins today now sit below the verb notes, so the mic
   and the verbs come first on Home
 
