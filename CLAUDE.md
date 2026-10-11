@@ -126,6 +126,7 @@ Out of scope for v1: categories, tags, notes fields, calendar sync, sharing, acc
 - Deployment target is iOS 26.1, for AlarmKit's current `Alert` initializer.
 - `Nabbit/Info.plist` holds keys Xcode has no build setting for (`NSAlarmKitUsageDescription`). It merges with the generated plist and is excluded from the synced folder's resources.
 - `Nabbit/Celebration`: `Celebration` sizes a Done (small / medium / big / clear board) before the reminder is marked done, and `CelebrationLines` rotates the copy without repeats. `CelebrationOverlay` draws confetti as plain animated shapes (a color flash with Reduce Motion) and never takes taps; `Haptics` plays the Core Haptics thump. Today rows peel off with `.peel`. Only Done from the app celebrates, not the notification button.
+- `Nabbit/Siri`: App Intents for create, done, snooze, move, check, and cancel, with phrases in `NabbitShortcuts`. Apple allows one variable per phrase, so create takes the verb in the phrase and asks for the thing and when. `VerbOption`, `WhenOption`, and `ReminderEntity` are nonisolated for App Intents; `SiriActions` does the work on the main actor through the same paths as the app's buttons. `ReminderEntity` displays the thing ("Dentist") so "done with dentist" matches. Test Siri on a device.
 - `Nabbit/Views`: SwiftUI screens.
 - Settings live in `@AppStorage`; keys are static constants on the type that owns them (`Theme.storageKey`, `DefaultTimes.tonightHourKey`).
 - Default actor isolation is MainActor (Swift 5 mode, approachable concurrency).

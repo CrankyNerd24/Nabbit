@@ -1,3 +1,4 @@
+import AppIntents
 import SwiftData
 import SwiftUI
 import UserNotifications
@@ -10,6 +11,7 @@ struct NabbitApp: App {
         // Set before launch finishes so a button tapped on a notification is handled.
         UNUserNotificationCenter.current().delegate = Nudges.shared
         Nudges.registerCategories()
+        NabbitShortcuts.updateAppShortcutParameters()
     }
 
     var body: some Scene {

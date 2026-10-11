@@ -1,3 +1,4 @@
+import AppIntents
 import Foundation
 import SwiftData
 import UserNotifications
@@ -113,6 +114,9 @@ final class Nudges: NSObject, UNUserNotificationCenterDelegate {
             .filter { $0.date > now }
             .sorted { $0.date < $1.date }
             .prefix(Self.pendingLimit)
+
+        // Lets Siri match phrases like "done with dentist" against current reminders.
+        NabbitShortcuts.updateAppShortcutParameters()
 
         let center = UNUserNotificationCenter.current()
         center.removeAllPendingNotificationRequests()
