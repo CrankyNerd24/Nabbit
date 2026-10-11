@@ -25,7 +25,7 @@ enum Alarms {
             try? manager.cancel(id: alarm.id)
         }
 
-        let theme = Theme.named(UserDefaults.standard.string(forKey: Theme.storageKey) ?? "")
+        let theme = Theme.named(UserDefaults.nabbit.string(forKey: Theme.storageKey) ?? "")
         for reminder in reminders {
             if Task.isCancelled { return }
             let id = reminder.uuid

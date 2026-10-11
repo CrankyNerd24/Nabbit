@@ -19,7 +19,7 @@ final class Reminder {
     /// Past the last nudge and still open. Worked out from the clock, since
     /// nudges fire while the app isn't running.
     var isSlipped: Bool {
-        !isDone && Date.now >= Nudges.lastNudgeDate(after: dueDate)
+        !isDone && Date.now >= NudgeTiming.lastNudgeDate(after: dueDate)
     }
 
     init(verb: Verb, thing: String, dueDate: Date) {

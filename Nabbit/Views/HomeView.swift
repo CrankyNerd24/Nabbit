@@ -2,13 +2,14 @@ import SwiftData
 import SwiftUI
 
 struct HomeView: View {
-    @AppStorage(Theme.storageKey) private var themeID = Theme.ember.id
+    @AppStorage(Theme.storageKey, store: .nabbit) private var themeID = Theme.ember.id
     @Environment(\.modelContext) private var context
     @Query(HomeView.recentReminders) private var recent: [Reminder]
     @Query(filter: #Predicate<Reminder> { $0.completedAt == nil }, sort: \Reminder.dueDate, animation: .snappy)
     private var open: [Reminder]
     @Query(HomeView.recentlyDone) private var recentlyDone: [Reminder]
     @State private var alerts = AlertCenter.shared
+    @State private var capture = CaptureRequest.shared
     @State private var path: [CaptureStep] = []
     @State private var banner: Banner?
     @State private var celebration: Celebration?
@@ -139,6 +140,11 @@ struct HomeView: View {
                     // Already handled somewhere else.
                     Color.clear.onAppear { alerts.current = nil }
                 }
+            }
+            .onChange(of: capture.count) {
+                // The New reminder control: back to the verb grid.
+                showingSettings = false
+                path = []
             }
             .task {
                 Thing.seedIfNeeded(in: context)

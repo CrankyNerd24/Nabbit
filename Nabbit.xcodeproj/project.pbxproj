@@ -78,6 +78,11 @@
 			path = NabbitWidgets;
 			sourceTree = "<group>";
 		};
+		043C9850307C400000750FFA /* Shared */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Shared;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -106,6 +111,7 @@
 				043C9845307C329000750FFA /* NabbitWidgetsExtension.entitlements */,
 				043C96E5307C02F300750FFA /* Nabbit */,
 				043C9833307C312F00750FFA /* NabbitWidgets */,
+				043C9850307C400000750FFA /* Shared */,
 				043C982E307C312F00750FFA /* Frameworks */,
 				043C96E4307C02F300750FFA /* Products */,
 			);
@@ -148,6 +154,7 @@
 			);
 			fileSystemSynchronizedGroups = (
 				043C96E5307C02F300750FFA /* Nabbit */,
+				043C9850307C400000750FFA /* Shared */,
 			);
 			name = Nabbit;
 			packageProductDependencies = (
@@ -170,6 +177,7 @@
 			);
 			fileSystemSynchronizedGroups = (
 				043C9833307C312F00750FFA /* NabbitWidgets */,
+				043C9850307C400000750FFA /* Shared */,
 			);
 			name = NabbitWidgetsExtension;
 			packageProductDependencies = (
@@ -458,9 +466,9 @@
 				DEVELOPMENT_TEAM = H47J9P9TQ3;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = NabbitWidgets/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = NabbitWidgets;
+				INFOPLIST_KEY_CFBundleDisplayName = Nabbit;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 26.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -491,9 +499,9 @@
 				DEVELOPMENT_TEAM = H47J9P9TQ3;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = NabbitWidgets/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = NabbitWidgets;
+				INFOPLIST_KEY_CFBundleDisplayName = Nabbit;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 26.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

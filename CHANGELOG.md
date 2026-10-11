@@ -5,6 +5,12 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+- Add a Next up widget for the Home Screen and Lock Screen, with a Done
+  button right on it, and a New reminder control for Control Center and
+  the Action button that opens Nabbit ready to go. Settings and
+  reminders now live where the widget can read them, so test reminders
+  and settings start fresh once
+
 - Add the widget extension and app group
 
 - Tell Siri how "Nabbit" is said, so it treats the name as the app

@@ -2,17 +2,13 @@ import AppIntents
 import Foundation
 import SwiftData
 import UserNotifications
+import WidgetKit
 
 /// Schedules each reminder's alert and its follow-up nudges as local notifications
 /// (the first alert rings through `Alarms` when allowed), and handles the
 /// Done / 15 min / Tonight buttons on them.
 final class Nudges: NSObject, UNUserNotificationCenterDelegate {
     static let shared = Nudges()
-
-    static let intervalKey = "nudgeMinutes"
-    static let defaultMinutes = 10
-    /// Nudges after the first alert. The last one is the final sound.
-    static let count = 3
 
     /// iOS keeps at most 64 pending notifications per app. The soonest ones are
     /// scheduled and the rest are added as the app reopens.
@@ -23,15 +19,6 @@ final class Nudges: NSObject, UNUserNotificationCenterDelegate {
 
     private var container: ModelContainer { Store.container }
     private var alarmTask: Task<Void, Never>?
-
-    static var interval: TimeInterval {
-        let minutes = UserDefaults.standard.object(forKey: intervalKey) as? Int ?? defaultMinutes
-        return TimeInterval(minutes * 60)
-    }
-
-    static func lastNudgeDate(after due: Date) -> Date {
-        due.addingTimeInterval(Double(count) * interval)
-    }
 
     static func registerCategories() {
         let actions = ReminderAction.allCases.map {
@@ -47,10 +34,10 @@ final class Nudges: NSObject, UNUserNotificationCenterDelegate {
         await Alarms.requestPermission()
     }
 
-    /// The nudge a reminder is on right now: 0 for the first alert, up to `count`.
+    /// The nudge a reminder is on right now: 0 for the first alert, up to `NudgeTiming.count`.
     static func step(for reminder: Reminder, at now: Date = .now) -> Int {
         let elapsed = now.timeIntervalSince(reminder.dueDate)
-        return min(max(Int(elapsed / interval), 0), count)
+        return min(max(Int(elapsed / NudgeTiming.interval), 0), NudgeTiming.count)
     }
 
     /// Applies a button press from anywhere: a notification, the alert, or the Today list.
@@ -74,7 +61,7 @@ final class Nudges: NSObject, UNUserNotificationCenterDelegate {
 
     /// Takes a reminder's alerts out of Notification Center once it's handled.
     func clearDelivered(for reminder: Reminder) {
-        let ids = (0...Self.count).map { "\(reminder.uuid.uuidString)-\($0)" }
+        let ids = (0...NudgeTiming.count).map { "\(reminder.uuid.uuidString)-\($0)" }
         UNUserNotificationCenter.current().removeDeliveredNotifications(withIdentifiers: ids)
     }
 
@@ -117,6 +104,7 @@ final class Nudges: NSObject, UNUserNotificationCenterDelegate {
 
         // Lets Siri match phrases like "done with dentist" against current reminders.
         NabbitShortcuts.updateAppShortcutParameters()
+        WidgetCenter.shared.reloadAllTimelines()
 
         let center = UNUserNotificationCenter.current()
         center.removeAllPendingNotificationRequests()
@@ -128,8 +116,8 @@ final class Nudges: NSObject, UNUserNotificationCenterDelegate {
     /// The alert at the due time, then a nudge every interval.
     private static func requests(for reminder: Reminder,
                                  skipFirst: Bool) -> [(date: Date, request: UNNotificationRequest)] {
-        ((skipFirst ? 1 : 0)...count).map { step in
-            let date = reminder.dueDate.addingTimeInterval(Double(step) * interval)
+        ((skipFirst ? 1 : 0)...NudgeTiming.count).map { step in
+            let date = reminder.dueDate.addingTimeInterval(Double(step) * NudgeTiming.interval)
             let content = UNMutableNotificationContent()
             content.title = reminder.text
             content.body = body(for: reminder, step: step)

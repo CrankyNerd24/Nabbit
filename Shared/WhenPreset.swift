@@ -48,7 +48,7 @@ struct DefaultTimes {
     var morningHour = 9
 
     static var current: DefaultTimes {
-        let defaults = UserDefaults.standard
+        let defaults = UserDefaults.nabbit
         var times = DefaultTimes()
         if defaults.object(forKey: tonightHourKey) != nil {
             times.tonightHour = defaults.integer(forKey: tonightHourKey)

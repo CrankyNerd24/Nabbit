@@ -122,9 +122,10 @@ Out of scope for v1: categories, tags, notes fields, calendar sync, sharing, acc
 
 ## Project layout
 
-- `Nabbit.xcodeproj` uses a synchronized folder: any file added under `Nabbit/` is in the target automatically.
-- `Nabbit/Model`: SwiftData models (`Reminder`, `Thing`) and the fixed lists (`Verb`, `WhenPreset`). Enums are stored as raw strings so predicates work.
-- `Nabbit/Theme`: the five themes and `ThemeColor`, which picks the text color by WCAG contrast.
+- `Nabbit.xcodeproj` uses synchronized folders: `Nabbit/` is the app, `NabbitWidgets/` is the widget extension, and `Shared/` is compiled into both. Any file added under a folder is in its target automatically.
+- `Shared/`: the SwiftData models, `Store`, the fixed lists, the themes, `NudgeTiming`, `UserDefaults.nabbit`, and the widget intents. It builds under two isolation defaults (the app is MainActor, the extension isn't), so keep it free of UI and app-only types.
+- App group `group.CrankyNerdNew.Nabbit` holds the SwiftData store and the settings (`UserDefaults.nabbit`, used by every `@AppStorage`) so the widgets can read them.
+- Models (`Reminder`, `Thing`) and the fixed lists (`Verb`, `WhenPreset`) store enums as raw strings so predicates work. `ThemeColor` picks the text color by WCAG contrast.
 - `Nabbit/Alerts`: `Nudges` schedules each reminder's alert plus its nudges as time-sensitive local notifications (soonest 60 only, refilled whenever the app comes forward) and handles their Done / 15 min / Tonight buttons. Slipped is worked out from the clock, since nudges fire while the app isn't running.
 - `ReminderAction` is the three buttons (Done / 15 min / Tonight); `Nudges.perform` applies one from any of the three places they appear (notification, full-screen alert, Today list).
 - `AlertCenter` holds which reminder the full-screen `AlertView` is showing. It opens when a notification arrives with the app open, when a notification is tapped, or when the app comes forward with something due.
@@ -134,6 +135,7 @@ Out of scope for v1: categories, tags, notes fields, calendar sync, sharing, acc
 - `Nabbit/Info.plist` holds keys Xcode has no build setting for (`NSAlarmKitUsageDescription`, and `INAlternativeAppNames` with a "nab it" pronunciation hint so Siri hears the name as the app). It merges with the generated plist and is excluded from the synced folder's resources.
 - `Nabbit/Celebration`: `Celebration` sizes a Done (small / medium / big / clear board) before the reminder is marked done, and `CelebrationLines` rotates the copy without repeats. `CelebrationOverlay` draws confetti as plain animated shapes (a color flash with Reduce Motion) and never takes taps; `Haptics` plays the Core Haptics thump. Today rows peel off with `.peel`. Only Done from the app celebrates, not the notification button.
 - `Nabbit/Siri`: App Intents for create, done, snooze, move, check, and cancel, with phrases in `NabbitShortcuts`. Apple allows one variable per phrase, so create takes the verb in the phrase and asks for the thing and when. `VerbOption`, `WhenOption`, and `ReminderEntity` are nonisolated for App Intents; `SiriActions` does the work on the main actor through the same paths as the app's buttons. `ReminderEntity` displays the thing ("Dentist") so "done with dentist" matches. Test Siri on a device.
+- `NabbitWidgets/`: the Next up widget (Home Screen small and medium, Lock Screen inline, circular, and rectangular) and the New reminder control for Control Center and the Action button. Widget buttons use intents from `Shared/WidgetIntents.swift`: `CompleteReminderIntent` is a LiveActivityIntent so it runs in the app process, and `OpenCaptureIntent` brings the app forward. Each target has its own `WidgetActions`; the app's (`Nabbit/Widgets`) does the work and the extension's is empty. `Nudges.reschedule` and theme changes reload the widget timelines.
 - `Nabbit/Views`: SwiftUI screens.
 - Settings live in `@AppStorage`; keys are static constants on the type that owns them (`Theme.storageKey`, `DefaultTimes.tonightHourKey`).
 - Default actor isolation is MainActor (Swift 5 mode, approachable concurrency).

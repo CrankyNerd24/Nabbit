@@ -1,12 +1,13 @@
 import SwiftData
 import SwiftUI
+import WidgetKit
 
 /// Every change applies the moment it's made. No Save button.
 struct SettingsView: View {
-    @AppStorage(Theme.storageKey) private var themeID = Theme.ember.id
-    @AppStorage(DefaultTimes.tonightHourKey) private var tonightHour = 19
-    @AppStorage(DefaultTimes.morningHourKey) private var morningHour = 9
-    @AppStorage(Nudges.intervalKey) private var nudgeMinutes = Nudges.defaultMinutes
+    @AppStorage(Theme.storageKey, store: .nabbit) private var themeID = Theme.ember.id
+    @AppStorage(DefaultTimes.tonightHourKey, store: .nabbit) private var tonightHour = 19
+    @AppStorage(DefaultTimes.morningHourKey, store: .nabbit) private var morningHour = 9
+    @AppStorage(NudgeTiming.intervalKey, store: .nabbit) private var nudgeMinutes = NudgeTiming.defaultMinutes
     @Environment(\.modelContext) private var context
     @Environment(\.dismiss) private var dismiss
 
@@ -54,7 +55,7 @@ struct SettingsView: View {
                 } header: {
                     Text("Nudges")
                 } footer: {
-                    Text("If it's not done, Nabbit nudges you \(Nudges.count) more times, then goes quiet.")
+                    Text("If it's not done, Nabbit nudges you \(NudgeTiming.count) more times, then goes quiet.")
                 }
 
                 #if DEBUG
@@ -69,6 +70,9 @@ struct SettingsView: View {
                     }
                 }
                 #endif
+            }
+            .onChange(of: themeID) {
+                WidgetCenter.shared.reloadAllTimelines()
             }
             .navigationTitle("Settings")
             .navigationBarTitleDisplayMode(.inline)
