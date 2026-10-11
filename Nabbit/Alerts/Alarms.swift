@@ -68,7 +68,7 @@ struct OpenAlarmIntent: LiveActivityIntent {
 
     func perform() async throws -> some IntentResult {
         if let uuid = UUID(uuidString: reminderID) {
-            AlertCenter.shared.show(uuid)
+            await AlertCenter.shared.show(uuid)
         }
         return .result()
     }
