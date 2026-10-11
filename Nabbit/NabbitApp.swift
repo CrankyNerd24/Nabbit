@@ -6,6 +6,7 @@ import UserNotifications
 @main
 struct NabbitApp: App {
     @Environment(\.scenePhase) private var scenePhase
+    @AppStorage(ThemeIntroView.shownKey, store: .nabbit) private var themeIntroShown = false
 
     init() {
         // Set before launch finishes so a button tapped on a notification is handled.
@@ -17,6 +18,10 @@ struct NabbitApp: App {
     var body: some Scene {
         WindowGroup {
             HomeView()
+                .sheet(isPresented: Binding(get: { !themeIntroShown },
+                                            set: { if !$0 { themeIntroShown = true } })) {
+                    ThemeIntroView { themeIntroShown = true }
+                }
         }
         .modelContainer(Store.container)
         .onChange(of: scenePhase) {

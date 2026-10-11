@@ -15,27 +15,8 @@ struct SettingsView: View {
         NavigationStack {
             Form {
                 Section("Theme") {
-                    HStack(spacing: 14) {
-                        ForEach(Theme.all) { theme in
-                            Button {
-                                themeID = theme.id
-                            } label: {
-                                Circle()
-                                    .fill(theme.tap1.color)
-                                    .overlay(Circle().fill(theme.alert.color).padding(14))
-                                    .overlay {
-                                        if theme.id == themeID {
-                                            Circle().stroke(.primary, lineWidth: 3)
-                                        }
-                                    }
-                                    .frame(width: 48, height: 48)
-                            }
-                            .buttonStyle(.plain)
-                            .accessibilityLabel(theme.name)
-                            .accessibilityAddTraits(theme.id == themeID ? .isSelected : [])
-                        }
-                    }
-                    .padding(.vertical, 4)
+                    ThemeSwatches(selection: $themeID)
+                        .padding(.vertical, 4)
                 }
 
                 Section("Default times") {

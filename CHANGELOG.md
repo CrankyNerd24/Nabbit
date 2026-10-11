@@ -5,6 +5,10 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+- The first time Nabbit opens, pick your colors from the five themes and
+  see them on real notes before you start. Ember is picked already, and
+  Settings uses the same row of swatches
+
 - A big mic button above the verbs: say "call the dentist tomorrow at
   3" and it's saved, with Undo. Say less and it opens the next step,
   so "call the dentist" asks when. It listens on your iPhone and stops
