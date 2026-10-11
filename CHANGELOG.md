@@ -5,6 +5,9 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+- Again? notes now sit below the verb notes, so the mic and the verbs
+  come first on Home
+
 - The first time Nabbit opens, pick your colors from the five themes and
   see them on real notes before you start. Ember is picked already, and
   Settings uses the same row of swatches

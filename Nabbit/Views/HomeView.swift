@@ -58,9 +58,6 @@ struct HomeView: View {
                     if !winsToday.isEmpty {
                         winsStrip
                     }
-                    if !againItems.isEmpty {
-                        againStrip
-                    }
                     MicButton(theme: theme,
                               hints: Verb.allCases.map(\.title) + things.map(\.name),
                               onHeard: heard)
@@ -73,6 +70,9 @@ struct HomeView: View {
                             }
                             .buttonStyle(NoteButtonStyle())
                         }
+                    }
+                    if !againItems.isEmpty {
+                        againStrip
                     }
                 }
                 .padding()
