@@ -1,3 +1,4 @@
+import Foundation
 import SwiftData
 
 /// The one reminder store, shared by the UI, notification buttons, intents, and the widgets.

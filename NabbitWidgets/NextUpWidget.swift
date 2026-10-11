@@ -1,4 +1,5 @@
 import AppIntents
+import Foundation
 import SwiftData
 import SwiftUI
 import WidgetKit
