@@ -55,7 +55,8 @@ nonisolated struct NabbitAlarm: AlarmMetadata {}
 /// The alarm's Open button: launches Nabbit into the full-screen alert.
 struct OpenAlarmIntent: LiveActivityIntent {
     static let title: LocalizedStringResource = "Open reminder"
-    static let openAppWhenRun = true
+    /// Brings Nabbit forward before `perform` runs.
+    static let supportedModes: IntentModes = .foreground(.immediate)
 
     @Parameter(title: "Reminder")
     var reminderID: String
@@ -68,6 +69,8 @@ struct OpenAlarmIntent: LiveActivityIntent {
 
     func perform() async throws -> some IntentResult {
         if let uuid = UUID(uuidString: reminderID) {
+            // Open handles it from here, so the alarm stops ringing.
+            try? AlarmManager.shared.stop(id: uuid)
             await AlertCenter.shared.show(uuid)
         }
         return .result()
