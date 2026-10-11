@@ -5,6 +5,10 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+- Pick a tone in Settings: Plain, Sassy, or Salty. Sassy gets cheeky and
+  Salty adds mild swearing ("Call Dentist. Right damn now."), in nudges,
+  alerts, celebrations, banners, and prompts. Siri keeps the plain voice
+
 - Add your own verbs with + New on the grid, like Text, Clean, or Water,
   and go straight to who or what. Press and hold a verb to hide it or,
   if you added it, remove it, and use Settings > Edit verbs to reorder.

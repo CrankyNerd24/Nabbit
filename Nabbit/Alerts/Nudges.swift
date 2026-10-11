@@ -135,14 +135,9 @@ final class Nudges: NSObject, UNUserNotificationCenterDelegate {
         }
     }
 
-    /// Gets more direct with each nudge.
+    /// Gets more direct with each nudge, in the person's chosen tone.
     static func body(for reminder: Reminder, step: Int) -> String {
-        switch step {
-        case 0: "It's time."
-        case 1: "\(reminder.text). Right now. \(reminder.verb.push)"
-        case 2: "Still here. \(reminder.thing). Go."
-        default: "Last one. Do it now or push it to tonight. No judgment."
-        }
+        Copy.nudge(for: reminder, step: step)
     }
 
     // MARK: - UNUserNotificationCenterDelegate

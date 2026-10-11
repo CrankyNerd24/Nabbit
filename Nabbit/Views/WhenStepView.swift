@@ -66,6 +66,6 @@ struct WhenStepView: View {
 
     private func save(at date: Date) {
         let reminder = CaptureStore.save(verb: verb, thing: thing, due: date, in: context)
-        onSaved("Got it. \(reminder.text), \(date.dueDescription()).")
+        onSaved(Copy.saved(reminder.text, due: date))
     }
 }

@@ -29,9 +29,9 @@ struct Celebration: Identifiable {
 
     static func make(for reminder: Reminder, size: Size) -> Celebration {
         let line: String = switch size {
-        case .clearBoard: "Clear board. Nothing left today."
-        case .big: "Finally handled. That one's been hanging around."
-        case .medium: "First try. Look at you."
+        case .clearBoard: Copy.clearBoard
+        case .big: Copy.finallyHandled
+        case .medium: Copy.firstTry
         case .small: CelebrationLines.next(for: reminder)
         }
         return Celebration(size: size, line: line)
@@ -42,33 +42,11 @@ struct Celebration: Identifiable {
 enum CelebrationLines {
     private static var last: String?
 
-    private static let general = [
-        "Handled.",
-        "Done and gone.",
-        "That's off your plate.",
-        "One less thing in your head.",
-        "Off the fridge.",
-        "Crossed off.",
-        "Nice. Next.",
-        "Sorted.",
-        "That's taken care of.",
-        "Done. Breathe.",
-        "Look at you go.",
-        "Checked off.",
-        "Out of your head, off the list.",
-        "Done is done.",
-        "Nailed it.",
-        "Boom. Handled.",
-        "Brain space freed.",
-        "That one's history.",
-        "Clean.",
-        "Small win. Real win.",
-    ]
-
     static func next(for reminder: Reminder) -> String {
+        let general = Copy.doneLines
         var pool = general
-        // About one in three is about the task itself.
-        if Int.random(in: 0..<3) == 0 {
+        // In the plain voice, about one in three is about the task itself.
+        if Copy.usesTaskLines && Int.random(in: 0..<3) == 0 {
             pool = [taskLine(for: reminder)]
         }
         let choices = pool.filter { $0 != last }

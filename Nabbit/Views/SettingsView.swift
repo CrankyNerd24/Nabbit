@@ -7,6 +7,7 @@ struct SettingsView: View {
     @AppStorage(Theme.storageKey, store: .nabbit) private var themeID = Theme.ember.id
     @AppStorage(DefaultTimes.tonightHourKey, store: .nabbit) private var tonightHour = 19
     @AppStorage(DefaultTimes.morningHourKey, store: .nabbit) private var morningHour = 9
+    @AppStorage(Tone.storageKey, store: .nabbit) private var tone = Tone.plain
     @AppStorage(NudgeTiming.intervalKey, store: .nabbit) private var nudgeMinutes = NudgeTiming.defaultMinutes
     @Environment(\.modelContext) private var context
     @Environment(\.dismiss) private var dismiss
@@ -17,6 +18,19 @@ struct SettingsView: View {
                 Section("Theme") {
                     ThemeSwatches(selection: $themeID)
                         .padding(.vertical, 4)
+                }
+
+                Section {
+                    Picker("Tone", selection: $tone) {
+                        ForEach(Tone.allCases) { Text($0.title).tag($0) }
+                    }
+                    .pickerStyle(.segmented)
+                    // Nudges already scheduled pick up the new wording.
+                    .onChange(of: tone) { Nudges.shared.reschedule() }
+                } header: {
+                    Text("Tone")
+                } footer: {
+                    Text(tone.sample)
                 }
 
                 Section {

@@ -224,7 +224,7 @@ struct HomeView: View {
                     Nudges.shared.saveAndReschedule()
                 })
             case .snooze15, .tonight:
-                banner = Banner(text: "\(reminder.thing) moved to \(reminder.dueDate.dueDescription()).")
+                banner = Banner(text: Copy.moved(reminder.thing, to: reminder.dueDate))
             }
         }
     }
@@ -235,7 +235,7 @@ struct HomeView: View {
         let spoken = VoiceParser.parse(text)
         guard let verb = spoken.verb else {
             withAnimation {
-                banner = Banner(text: "Missed that. Say it like this: call the dentist tomorrow.")
+                banner = Banner(text: Copy.missed)
             }
             return
         }
@@ -250,7 +250,7 @@ struct HomeView: View {
         }
         let reminder = CaptureStore.save(verb: verb, thing: thing, due: due, in: context)
         withAnimation {
-            banner = Banner(text: "Got it. \(reminder.text), \(due.dueDescription()).", undo: {
+            banner = Banner(text: Copy.saved(reminder.text, due: due), undo: {
                 Nudges.shared.clearDelivered(for: reminder)
                 context.delete(reminder)
                 Nudges.shared.saveAndReschedule()
@@ -273,7 +273,7 @@ struct HomeView: View {
         context.delete(reminder)
         Nudges.shared.saveAndReschedule()
         withAnimation {
-            banner = Banner(text: "\(thing) reminder's gone.", undo: {
+            banner = Banner(text: Copy.removed(thing), undo: {
                 let restored = Reminder(verb: verb, thing: thing, dueDate: due)
                 restored.uuid = uuid
                 context.insert(restored)
@@ -313,7 +313,7 @@ struct HomeView: View {
     private func hotKeyCallout(_ thing: Thing) -> some View {
         let fill = theme.tap2
         return VStack(alignment: .leading, spacing: 12) {
-            Text("You've added \(thing.verb.title) \(thing.name) \(thing.useCount) times. Want a hot key for it?")
+            Text(Copy.hotKeyOffer("\(thing.verb.title) \(thing.name)", count: thing.useCount))
                 .font(.headline)
                 .fixedSize(horizontal: false, vertical: true)
             HStack(spacing: 10) {

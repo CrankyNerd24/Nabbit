@@ -42,8 +42,8 @@ struct ThingStepView: View {
             }
             .padding()
         }
-        .navigationTitle(verb.thingPrompt)
-        .alert(verb.thingPrompt, isPresented: $addingNew) {
+        .navigationTitle(Copy.thingPrompt(for: verb))
+        .alert(Copy.thingPrompt(for: verb), isPresented: $addingNew) {
             TextField("Name", text: $newName)
                 .textInputAutocapitalization(.words)
             Button("Add", action: addNew)

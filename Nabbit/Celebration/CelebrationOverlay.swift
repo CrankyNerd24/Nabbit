@@ -17,7 +17,7 @@ struct CelebrationOverlay: View {
     var body: some View {
         ZStack {
             if celebration.size == .clearBoard {
-                ClearBoardView(theme: theme)
+                ClearBoardView(theme: theme, line: celebration.line)
             }
             if reduceMotion {
                 FlashView(color: theme.done.color, size: celebration.size)
@@ -139,6 +139,7 @@ private struct FlashView: View {
 /// The whole day is done: an empty fridge door.
 private struct ClearBoardView: View {
     let theme: Theme
+    let line: String
     @State private var opacity = 1.0
 
     var body: some View {
@@ -154,7 +155,7 @@ private struct ClearBoardView: View {
                             .frame(width: 8, height: 70)
                             .padding(.leading, 20)
                     }
-                Text("Clear board.\nNothing left today.")
+                Text(line.replacingOccurrences(of: ". ", with: ".\n"))
                     .font(.largeTitle.bold())
                     .multilineTextAlignment(.center)
             }
