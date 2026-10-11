@@ -128,7 +128,10 @@ struct HomeView: View {
             .fullScreenCover(item: $alerts.current) { item in
                 if let reminder = open.first(where: { $0.uuid == item.id }) {
                     AlertView(reminder: reminder, theme: theme) { action in
-                        alerts.current = nil
+                        // Gone at once, so the celebration plays in full view on Home.
+                        var instant = Transaction()
+                        instant.disablesAnimations = true
+                        withTransaction(instant) { alerts.current = nil }
                         act(action, on: reminder)
                     }
                 } else {

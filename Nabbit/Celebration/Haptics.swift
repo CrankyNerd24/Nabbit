@@ -24,12 +24,21 @@ enum Haptics {
     private static func events(for size: Celebration.Size) -> [CHHapticEvent] {
         switch size {
         case .small:
-            [tap(at: 0, intensity: 0.55, sharpness: 0.5)]
+            [tap(at: 0, intensity: 0.8, sharpness: 0.6)]
         case .medium, .big, .clearBoard:
-            [tap(at: 0, intensity: 1, sharpness: 0.2),
-             tap(at: 0.16, intensity: 0.7, sharpness: 0.8),
-             tap(at: 0.26, intensity: 0.7, sharpness: 0.8)]
+            // The thump: a short full-strength buzz under a hard hit, then a crisp double tap.
+            [thump(at: 0, duration: 0.09),
+             tap(at: 0, intensity: 1, sharpness: 0.6),
+             tap(at: 0.2, intensity: 1, sharpness: 0.9),
+             tap(at: 0.32, intensity: 1, sharpness: 0.9)]
         }
+    }
+
+    private static func thump(at time: TimeInterval, duration: TimeInterval) -> CHHapticEvent {
+        CHHapticEvent(eventType: .hapticContinuous,
+                      parameters: [CHHapticEventParameter(parameterID: .hapticIntensity, value: 1),
+                                   CHHapticEventParameter(parameterID: .hapticSharpness, value: 0.35)],
+                      relativeTime: time, duration: duration)
     }
 
     private static func tap(at time: TimeInterval, intensity: Float, sharpness: Float) -> CHHapticEvent {
