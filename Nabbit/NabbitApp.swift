@@ -1,17 +1,12 @@
-//
-//  NabbitApp.swift
-//  Nabbit
-//
-//  Created by Bryan Rupp on 10/11/26.
-//
-
+import SwiftData
 import SwiftUI
 
 @main
 struct NabbitApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            HomeView()
         }
+        .modelContainer(for: [Reminder.self, Thing.self])
     }
 }
