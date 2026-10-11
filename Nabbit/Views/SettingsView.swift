@@ -1,3 +1,4 @@
+import SwiftData
 import SwiftUI
 
 /// Every change applies the moment it's made. No Save button.
