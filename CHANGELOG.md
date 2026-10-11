@@ -5,6 +5,11 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+- New, higher-contrast themes: Primary (now the default), Midnight, and
+  Retro join Slate and Berry, with clearly different colors for the
+  verb, who-or-what, and when notes. Ember, Workshop, and Forest are
+  gone; if you used one, Nabbit switches you to Primary
+
 - Pick a tone in Settings: Plain, Sassy, or Salty. Sassy gets cheeky and
   Salty adds mild swearing ("Call Dentist. Right damn now."), in nudges,
   alerts, celebrations, banners, and prompts. Siri keeps the plain voice

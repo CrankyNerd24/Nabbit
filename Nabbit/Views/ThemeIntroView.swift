@@ -5,7 +5,7 @@ import SwiftUI
 struct ThemeIntroView: View {
     static let shownKey = "themeIntroShown"
 
-    @AppStorage(Theme.storageKey, store: .nabbit) private var themeID = Theme.ember.id
+    @AppStorage(Theme.storageKey, store: .nabbit) private var themeID = Theme.standard.id
     let onStart: () -> Void
 
     private var theme: Theme { Theme.named(themeID) }

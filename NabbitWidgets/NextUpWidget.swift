@@ -38,7 +38,7 @@ struct NextUpEntry: TimelineEntry {
         notes: [NoteSnapshot(id: UUID(), text: "Call Dentist", due: .now, slipped: false),
                 NoteSnapshot(id: UUID(), text: "Take Meds", due: .now.addingTimeInterval(3600), slipped: false)],
         dueToday: 2,
-        theme: .ember)
+        theme: .standard)
 }
 
 struct NextUpProvider: TimelineProvider {

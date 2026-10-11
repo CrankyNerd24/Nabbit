@@ -36,6 +36,6 @@ enum NoteGrid {
 }
 
 #Preview {
-    StickyNote(text: "Pick up", fill: Theme.ember.tap1)
+    StickyNote(text: "Pick up", fill: Theme.standard.tap1)
         .padding()
 }

@@ -3,7 +3,7 @@ import SwiftData
 import SwiftUI
 
 struct HomeView: View {
-    @AppStorage(Theme.storageKey, store: .nabbit) private var themeID = Theme.ember.id
+    @AppStorage(Theme.storageKey, store: .nabbit) private var themeID = Theme.standard.id
     @AppStorage(VerbStore.key, store: .nabbit) private var verbLayoutJSON = ""
     @Environment(\.modelContext) private var context
     @Query(filter: #Predicate<Reminder> { $0.completedAt == nil }, sort: \Reminder.dueDate, animation: .snappy)

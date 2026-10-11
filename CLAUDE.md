@@ -59,15 +59,15 @@ Text color is chosen automatically per background (warm near-black #1E1A16 or wa
 
 | Theme | Vibe | Tap 1 | Tap 2 | Tap 3 | Alert | Done |
 |---|---|---|---|---|---|---|
-| Ember (default) | Warm | #FAC775 | #F5C4B3 | #F0997B | #D85C32 | #FAC775 |
-| Workshop | Kraft and charcoal | #E3CBA0 | #C9A979 | #B4B2A9 | #2C2C2A | #EF9F27 |
-| Forest | Olive and moss | #C0DD97 | #97C459 | #D6C793 | #27500A | #EF9F27 |
+| Primary (default) | Bold and simple | #FFC93C | #3D7BFF | #FF5A5F | #14213D | #2EC4B6 |
+| Midnight | Dark notes, bright pops | #26334D | #5B2A86 | #0F5257 | #FF5E3A | #FFD23F |
 | Slate | Steel and navy | #B5D4F4 | #A9B8C6 | #D3D1C7 | #0C447C | #EF9F27 |
 | Berry | Pink and coral | #F4C0D1 | #ED93B1 | #F0997B | #D55681 | #FAC775 |
+| Retro | 70s kitchen | #F4D35E | #0D3B66 | #EE964B | #B8341B | #F4D35E |
 
-Ember and Berry alerts were lifted a shade from the original #D85A30 and #D4537E, which measured 4.47:1 and 4.40:1 against the dark text.
+Tap 1, 2, and 3 should be clearly different hues so the three steps read apart. Berry's alert was lifted a shade from the original #D4537E, which measured 4.40:1 against the dark text. `Theme.standard` is the default and the fallback for a saved theme that's no longer offered.
 
-Picker: one row of swatches in settings, Ember preselected, applies instantly, no Save. Also shown once at first launch.
+Picker: one row of swatches in settings, Primary preselected, applies instantly, no Save. Also shown once at first launch.
 
 ## Siri and voice
 

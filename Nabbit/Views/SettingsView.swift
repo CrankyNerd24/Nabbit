@@ -4,7 +4,7 @@ import WidgetKit
 
 /// Every change applies the moment it's made. No Save button.
 struct SettingsView: View {
-    @AppStorage(Theme.storageKey, store: .nabbit) private var themeID = Theme.ember.id
+    @AppStorage(Theme.storageKey, store: .nabbit) private var themeID = Theme.standard.id
     @AppStorage(DefaultTimes.tonightHourKey, store: .nabbit) private var tonightHour = 19
     @AppStorage(DefaultTimes.morningHourKey, store: .nabbit) private var morningHour = 9
     @AppStorage(Tone.storageKey, store: .nabbit) private var tone = Tone.plain
