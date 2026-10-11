@@ -6,8 +6,42 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		043C9830307C312F00750FFA /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 043C982F307C312F00750FFA /* WidgetKit.framework */; };
+		043C9832307C312F00750FFA /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 043C9831307C312F00750FFA /* SwiftUI.framework */; };
+		043C983F307C313000750FFA /* NabbitWidgetsExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 043C982D307C312F00750FFA /* NabbitWidgetsExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		043C983D307C313000750FFA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 043C96DB307C02F300750FFA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 043C982C307C312F00750FFA;
+			remoteInfo = NabbitWidgetsExtension;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		043C9844307C313000750FFA /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				043C983F307C313000750FFA /* NabbitWidgetsExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		043C96E3307C02F300750FFA /* Nabbit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Nabbit.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		043C982D307C312F00750FFA /* NabbitWidgetsExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = NabbitWidgetsExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		043C982F307C312F00750FFA /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		043C9831307C312F00750FFA /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		043C9845307C329000750FFA /* NabbitWidgetsExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NabbitWidgetsExtension.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -17,6 +51,13 @@
 				Info.plist,
 			);
 			target = 043C96E2307C02F300750FFA /* Nabbit */;
+		};
+		043C9843307C313000750FFA /* Exceptions for "NabbitWidgets" folder in "NabbitWidgetsExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 043C982C307C312F00750FFA /* NabbitWidgetsExtension */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
@@ -29,6 +70,14 @@
 			path = Nabbit;
 			sourceTree = "<group>";
 		};
+		043C9833307C312F00750FFA /* NabbitWidgets */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				043C9843307C313000750FFA /* Exceptions for "NabbitWidgets" folder in "NabbitWidgetsExtension" target */,
+			);
+			path = NabbitWidgets;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -39,13 +88,25 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		043C982A307C312F00750FFA /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				043C9832307C312F00750FFA /* SwiftUI.framework in Frameworks */,
+				043C9830307C312F00750FFA /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		043C96DA307C02F300750FFA = {
 			isa = PBXGroup;
 			children = (
+				043C9845307C329000750FFA /* NabbitWidgetsExtension.entitlements */,
 				043C96E5307C02F300750FFA /* Nabbit */,
+				043C9833307C312F00750FFA /* NabbitWidgets */,
+				043C982E307C312F00750FFA /* Frameworks */,
 				043C96E4307C02F300750FFA /* Products */,
 			);
 			sourceTree = "<group>";
@@ -54,8 +115,18 @@
 			isa = PBXGroup;
 			children = (
 				043C96E3307C02F300750FFA /* Nabbit.app */,
+				043C982D307C312F00750FFA /* NabbitWidgetsExtension.appex */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		043C982E307C312F00750FFA /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				043C982F307C312F00750FFA /* WidgetKit.framework */,
+				043C9831307C312F00750FFA /* SwiftUI.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -68,10 +139,12 @@
 				043C96DF307C02F300750FFA /* Sources */,
 				043C96E0307C02F300750FFA /* Frameworks */,
 				043C96E1307C02F300750FFA /* Resources */,
+				043C9844307C313000750FFA /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				043C983E307C313000750FFA /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				043C96E5307C02F300750FFA /* Nabbit */,
@@ -82,6 +155,28 @@
 			productName = Nabbit;
 			productReference = 043C96E3307C02F300750FFA /* Nabbit.app */;
 			productType = "com.apple.product-type.application";
+		};
+		043C982C307C312F00750FFA /* NabbitWidgetsExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 043C9840307C313000750FFA /* Build configuration list for PBXNativeTarget "NabbitWidgetsExtension" */;
+			buildPhases = (
+				043C9829307C312F00750FFA /* Sources */,
+				043C982A307C312F00750FFA /* Frameworks */,
+				043C982B307C312F00750FFA /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				043C9833307C312F00750FFA /* NabbitWidgets */,
+			);
+			name = NabbitWidgetsExtension;
+			packageProductDependencies = (
+			);
+			productName = NabbitWidgetsExtension;
+			productReference = 043C982D307C312F00750FFA /* NabbitWidgetsExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -94,6 +189,9 @@
 				LastUpgradeCheck = 2660;
 				TargetAttributes = {
 					043C96E2307C02F300750FFA = {
+						CreatedOnToolsVersion = 26.6;
+					};
+					043C982C307C312F00750FFA = {
 						CreatedOnToolsVersion = 26.6;
 					};
 				};
@@ -113,12 +211,20 @@
 			projectRoot = "";
 			targets = (
 				043C96E2307C02F300750FFA /* Nabbit */,
+				043C982C307C312F00750FFA /* NabbitWidgetsExtension */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		043C96E1307C02F300750FFA /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		043C982B307C312F00750FFA /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -135,7 +241,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		043C9829307C312F00750FFA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		043C983E307C313000750FFA /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 043C982C307C312F00750FFA /* NabbitWidgetsExtension */;
+			targetProxy = 043C983D307C313000750FFA /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		043C96EC307C02F500750FFA /* Debug */ = {
@@ -326,6 +447,73 @@
 			};
 			name = Release;
 		};
+		043C9841307C313000750FFA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = NabbitWidgetsExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = H47J9P9TQ3;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = NabbitWidgets/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = NabbitWidgets;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.5;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = CrankyNerdNew.Nabbit.NabbitWidgets;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		043C9842307C313000750FFA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = NabbitWidgetsExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = H47J9P9TQ3;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = NabbitWidgets/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = NabbitWidgets;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.5;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = CrankyNerdNew.Nabbit.NabbitWidgets;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -343,6 +531,15 @@
 			buildConfigurations = (
 				043C96EF307C02F500750FFA /* Debug */,
 				043C96F0307C02F500750FFA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		043C9840307C313000750FFA /* Build configuration list for PBXNativeTarget "NabbitWidgetsExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				043C9841307C313000750FFA /* Debug */,
+				043C9842307C313000750FFA /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

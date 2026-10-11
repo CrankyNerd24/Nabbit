@@ -5,6 +5,8 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+- Add the widget extension and app group
+
 - Tell Siri how "Nabbit" is said, so it treats the name as the app
   instead of asking whether you meant Notes
 
