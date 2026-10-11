@@ -14,12 +14,19 @@ enum SiriActions {
 
     // MARK: Create
 
-    static func thingPrompt(verb: VerbOption) -> String {
+    /// "Call, pick up, take, …": the verbs on the grid, for Siri's first question.
+    static func verbChoices() -> String {
+        let words = VerbStore.visible().map { $0.title.lowercased() }
+        guard words.count > 1 else { return words.first ?? "" }
+        return words.dropLast().joined(separator: ", ") + ", or " + (words.last ?? "")
+    }
+
+    static func thingPrompt(verb: VerbEntity) -> String {
         resolve(verb).thingPrompt
     }
 
     /// Adds the thing if it's new, so the follow-up question can say so.
-    static func whenPrompt(verb: VerbOption, thing: String) -> String {
+    static func whenPrompt(verb: VerbEntity, thing: String) -> String {
         let verb = resolve(verb)
         if existingThing(named: thing, verb: verb) == nil {
             context.insert(Thing(name: thing, verb: verb))
@@ -29,7 +36,7 @@ enum SiriActions {
         return "\(verb.title) \(thing). When? In an hour, tonight, tomorrow, or next Monday."
     }
 
-    static func create(verb: VerbOption, thing: String, when: WhenOption) -> String {
+    static func create(verb: VerbEntity, thing: String, when: WhenOption) -> String {
         let verb = resolve(verb)
         let preset = WhenPreset(rawValue: when.rawValue) ?? .inOneHour
         let due = preset.date() ?? .now.addingTimeInterval(60 * 60)
@@ -93,8 +100,8 @@ enum SiriActions {
 
     // MARK: Lookups
 
-    private static func resolve(_ option: VerbOption) -> Verb {
-        Verb(rawValue: option.rawValue) ?? .call
+    private static func resolve(_ entity: VerbEntity) -> Verb {
+        Verb(rawValue: entity.id) ?? .call
     }
 
     private static func openReminders() -> [Reminder] {

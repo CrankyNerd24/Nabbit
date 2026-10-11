@@ -4,20 +4,41 @@ import Foundation
 // Fixed lists Siri can match by name, and the reminders it can refer to.
 // Kept nonisolated: App Intents reads these off the main actor.
 
-nonisolated enum VerbOption: String, AppEnum {
-    case call, pickUp, take, pay, buy, email, book, goTo
-
+/// A verb Siri can hear: the built-ins and any the person added. Dynamic, so added
+/// verbs work in "Remind me in Nabbit to …" once the app refreshes its phrases.
+nonisolated struct VerbEntity: AppEntity {
     static let typeDisplayRepresentation: TypeDisplayRepresentation = "Task"
-    static let caseDisplayRepresentations: [VerbOption: DisplayRepresentation] = [
-        .call: "call",
-        .pickUp: "pick up",
-        .take: "take",
-        .pay: "pay",
-        .buy: "buy",
-        .email: "email",
-        .book: "book",
-        .goTo: "go to",
-    ]
+    static let defaultQuery = VerbQuery()
+
+    /// The verb's raw value.
+    let id: String
+    let title: String
+
+    init(_ verb: Verb) {
+        id = verb.rawValue
+        title = verb.title
+    }
+
+    var displayRepresentation: DisplayRepresentation {
+        DisplayRepresentation(title: "\(title.lowercased())")
+    }
+}
+
+nonisolated struct VerbQuery: EntityStringQuery {
+    func entities(for identifiers: [String]) async throws -> [VerbEntity] {
+        identifiers.compactMap(Verb.init(rawValue:)).map(VerbEntity.init)
+    }
+
+    func entities(matching string: String) async throws -> [VerbEntity] {
+        let said = string.trimmingCharacters(in: .whitespacesAndNewlines)
+        return VerbStore.visible()
+            .filter { said.localizedCaseInsensitiveContains($0.title) || $0.title.localizedCaseInsensitiveContains(said) }
+            .map(VerbEntity.init)
+    }
+
+    func suggestedEntities() async throws -> [VerbEntity] {
+        VerbStore.visible().map(VerbEntity.init)
+    }
 }
 
 nonisolated enum WhenOption: String, AppEnum {

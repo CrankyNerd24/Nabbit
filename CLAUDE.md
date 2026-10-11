@@ -24,7 +24,7 @@ An iOS planning and reminder app for people with ADHD. Think sticky notes on the
 
 ## Capture flow (three taps)
 
-1. **Verb** — fixed grid of big sticky notes: Call, Pick up, Take, Pay, Buy, Email, Book, Go to. User can reorder or hide.
+1. **Verb** — grid of big sticky notes: Call, Pick up, Take, Pay, Buy, Email, Book, Go to, plus any the user adds ("+ New" on the grid, one word). User can reorder or hide them, and delete ones they added.
 2. **Thing** — list depends on the verb (Call → Dentist, Mom, Doctor, Vet, Pharmacy; Take → Meds, Vitamins; Pick up → Kids, Prescription, Dry cleaning). Most-used float to the front. "+ New" adds one with a single text field.
 3. **When** — plain-language chips: In 1 hour, Tonight, Tomorrow AM, Next Monday, Pick a day. Each maps to a default time set once in settings (Tonight = 7pm, AM = 9am). Tapping a chip saves.
 
@@ -71,7 +71,7 @@ Picker: one row of swatches in settings, Ember preselected, applies instantly, n
 
 ## Siri and voice
 
-Phrases must include the app name and use fixed lists (verb enum, user's saved things as entities, when chips as enum). Missing pieces get a one-word follow-up.
+Phrases must include the app name and use known lists (the user's verbs and saved things as entities, when chips as enum). Missing pieces get a one-word follow-up.
 
 - Create: "Remind me in Nabbit to call the dentist next Monday" / "Nabbit, call the dentist next Monday" / "New Nabbit reminder"
   - All given: "Got it. Call the dentist, Monday at 9. I'll make sure it happens."
@@ -138,6 +138,7 @@ Out of scope for v1: categories, tags, notes fields, calendar sync, sharing, acc
 - `NabbitWidgets/`: the Next up widget (Home Screen small and medium, Lock Screen inline, circular, and rectangular) and the New reminder control for Control Center and the Action button. Widget buttons use intents from `Shared/WidgetIntents.swift`: `CompleteReminderIntent` is a LiveActivityIntent so it runs in the app process, and `OpenCaptureIntent` brings the app forward. Each target has its own `WidgetActions`; the app's (`Nabbit/Widgets`) does the work and the extension's is empty. `Nudges.reschedule` and theme changes reload the widget timelines.
 - `Nabbit/Voice`: the mic button. `SpeechListener` records and transcribes on device (en-US), stopping after a 1.5-second pause; its audio and recognition callbacks are set up in nonisolated helpers because they arrive off the main actor. `VoiceParser` turns the words into a verb, a thing, and a time ("in 20 minutes", "tonight", "tomorrow at 3", "Friday"); Home saves it when all three are there, otherwise opens the three-tap flow at the first missing step.
 - `Nabbit/Capture/CaptureStore` is the one save path for new reminders (three taps and voice) and matches a spoken thing to a saved one or adds it.
+- Verbs: `Verb` is a struct with eight built-ins and `Verb.custom(_:)` for added ones, stored as "custom:Word" so the word survives removal. `VerbStore` keeps the added verbs, order, and hidden list as JSON in `UserDefaults.nabbit` (watch it with `@AppStorage(VerbStore.key)`); `visible()` is the grid, Siri's list, and the mic's list. Siri's verb is `VerbEntity` (dynamic), and Home refreshes App Shortcut parameters when the layout changes. Hidden or removed verbs keep their reminders.
 - `Nabbit/Views`: SwiftUI screens. Home runs top to bottom: Today, the hot key offer, the mic, the verb grid, Again? (hot keys), then Wins today. A hot key is opt-in: once a `Thing`'s `useCount` reaches `Thing.hotKeyThreshold` (3), Home offers it once (`hotKeyOffered`); yes sets `hotKey`, which pins it to Again?. `ThemeSwatches` is the one row of theme swatches, used in Settings and in `ThemeIntroView`, the sheet `NabbitApp` shows once at first launch (`themeIntroShown` in `UserDefaults.nabbit`).
 - Settings live in `@AppStorage`; keys are static constants on the type that owns them (`Theme.storageKey`, `DefaultTimes.tonightHourKey`).
 - Default actor isolation is MainActor (Swift 5 mode, approachable concurrency).

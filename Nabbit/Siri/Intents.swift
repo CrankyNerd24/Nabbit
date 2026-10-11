@@ -7,7 +7,7 @@ struct CreateReminderIntent: AppIntent {
     static let description = IntentDescription("Make a reminder: what to do, who or what, and when.")
 
     @Parameter(title: "Do")
-    var verb: VerbOption?
+    var verb: VerbEntity?
 
     @Parameter(title: "Who or what")
     var thing: String?
@@ -17,7 +17,8 @@ struct CreateReminderIntent: AppIntent {
 
     func perform() async throws -> some IntentResult & ProvidesDialog {
         guard let verb else {
-            throw $verb.needsValueError("What's the task? Call, pick up, take, pay, buy, email, book, or go to.")
+            let choices = await SiriActions.verbChoices()
+            throw $verb.needsValueError("What's the task? \(choices).")
         }
         let name = (thing ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
         guard !name.isEmpty else {

@@ -82,15 +82,16 @@ enum CelebrationLines {
         if reminder.verb == .call && thing.localizedCaseInsensitiveContains("dentist") {
             return "Dentist called. Your teeth thank you."
         }
-        return switch reminder.verb {
-        case .call: "\(thing) called. Done."
-        case .pickUp: "\(thing) picked up."
-        case .take: "\(thing) taken. Good."
-        case .pay: "\(thing) paid. Money stuff handled."
-        case .buy: "\(thing) bought."
-        case .email: "\(thing) emailed. Sent and done."
-        case .book: "\(thing) booked."
-        case .goTo: "Made it to \(thing)."
+        return switch reminder.verb.rawValue {
+        case "call": "\(thing) called. Done."
+        case "pickUp": "\(thing) picked up."
+        case "take": "\(thing) taken. Good."
+        case "pay": "\(thing) paid. Money stuff handled."
+        case "buy": "\(thing) bought."
+        case "email": "\(thing) emailed. Sent and done."
+        case "book": "\(thing) booked."
+        case "goTo": "Made it to \(thing)."
+        default: "\(reminder.text). Done and gone."
         }
     }
 }

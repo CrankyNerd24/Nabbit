@@ -37,7 +37,7 @@ final class Thing {
     static func seedIfNeeded(in context: ModelContext) {
         let existing = (try? context.fetchCount(FetchDescriptor<Thing>())) ?? 0
         guard existing == 0 else { return }
-        for verb in Verb.allCases {
+        for verb in Verb.builtIns {
             for name in verb.starterThings {
                 context.insert(Thing(name: name, verb: verb))
             }

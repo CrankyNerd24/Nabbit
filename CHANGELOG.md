@@ -5,6 +5,11 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+- Add your own verbs with + New on the grid, like Text, Clean, or Water,
+  and go straight to who or what. Press and hold a verb to hide it or,
+  if you added it, remove it, and use Settings > Edit verbs to reorder.
+  Siri and the mic understand added verbs too
+
 - Again? now holds only hot keys you ask for. After you've made the same
   reminder three times, Nabbit offers one once; say yes to pin it, or no
   and it won't ask about that one again. Press and hold a hot key to

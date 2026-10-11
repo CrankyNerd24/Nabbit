@@ -10,16 +10,24 @@ struct SpokenReminder: Equatable {
 
 /// Turns "call the dentist tomorrow at 3" into a verb, a thing, and a time. English only.
 enum VoiceParser {
-    private static let verbWords: [(Verb, [String])] = [
-        (.pickUp, ["pick up", "collect", "grab"]),
-        (.goTo, ["go to", "head to", "drive to", "stop at"]),
-        (.call, ["call", "phone", "ring"]),
-        (.take, ["take"]),
-        (.pay, ["pay"]),
-        (.buy, ["buy", "get"]),
-        (.email, ["email", "e mail", "message"]),
-        (.book, ["book", "schedule"]),
+    /// Other ways people say the built-in verbs. Added verbs are matched by their word.
+    private static let builtInWords: [String: [String]] = [
+        "pickUp": ["pick up", "collect", "grab"],
+        "goTo": ["go to", "head to", "drive to", "stop at"],
+        "call": ["call", "phone", "ring"],
+        "take": ["take"],
+        "pay": ["pay"],
+        "buy": ["buy", "get"],
+        "email": ["email", "e mail", "message"],
+        "book": ["book", "schedule"],
     ]
+
+    /// The verbs on the grid and the words that mean each one.
+    private static func verbWords() -> [(Verb, [String])] {
+        VerbStore.visible().map { verb in
+            (verb, builtInWords[verb.rawValue] ?? [normalize(verb.title)])
+        }
+    }
 
     private static let leadIns = ["remind me to", "remind me", "i need to", "i have to", "i gotta",
                                   "need to", "have to", "don't forget to", "nabbit"]
@@ -45,10 +53,11 @@ enum VoiceParser {
 
         // The earliest verb in what's left; on a tie, the longer phrase ("pick up" over "pick").
         var best: (verb: Verb, range: Range<String.Index>)?
-        for (verb, phrases) in verbWords {
+        for (verb, phrases) in verbWords() {
             for phrase in phrases {
                 guard let range = wordRange(of: phrase, in: rest) else { continue }
-                if best == nil || range.lowerBound < best!.range.lowerBound {
+                if best == nil || range.lowerBound < best!.range.lowerBound
+                    || (range.lowerBound == best!.range.lowerBound && range.upperBound > best!.range.upperBound) {
                     best = (verb, range)
                 }
             }

@@ -19,6 +19,16 @@ struct SettingsView: View {
                         .padding(.vertical, 4)
                 }
 
+                Section {
+                    NavigationLink("Edit verbs") {
+                        VerbEditorView()
+                    }
+                } header: {
+                    Text("Verbs")
+                } footer: {
+                    Text("Add your own, hide ones you don't use, or change the order.")
+                }
+
                 Section("Default times") {
                     Picker("Tonight", selection: $tonightHour) {
                         ForEach(16..<24, id: \.self) { Text(hourLabel($0)).tag($0) }

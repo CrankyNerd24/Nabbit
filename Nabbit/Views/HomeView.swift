@@ -1,8 +1,10 @@
+import AppIntents
 import SwiftData
 import SwiftUI
 
 struct HomeView: View {
     @AppStorage(Theme.storageKey, store: .nabbit) private var themeID = Theme.ember.id
+    @AppStorage(VerbStore.key, store: .nabbit) private var verbLayoutJSON = ""
     @Environment(\.modelContext) private var context
     @Query(filter: #Predicate<Reminder> { $0.completedAt == nil }, sort: \Reminder.dueDate, animation: .snappy)
     private var open: [Reminder]
@@ -14,8 +16,12 @@ struct HomeView: View {
     @State private var banner: Banner?
     @State private var celebration: Celebration?
     @State private var showingSettings = false
+    @State private var addingVerb = false
+    @State private var newVerb = ""
+    @State private var editingVerbs = false
 
     private var theme: Theme { Theme.named(themeID) }
+    private var verbs: [Verb] { VerbStore.visible(in: VerbStore.layout(from: verbLayoutJSON)) }
 
     private static var recentlyDone: FetchDescriptor<Reminder> {
         var descriptor = FetchDescriptor<Reminder>(predicate: #Predicate { $0.completedAt != nil },
@@ -55,16 +61,60 @@ struct HomeView: View {
                             .transition(.opacity.combined(with: .move(edge: .top)))
                     }
                     MicButton(theme: theme,
-                              hints: Verb.allCases.map(\.title) + things.map(\.name),
+                              hints: verbs.map(\.title) + things.map(\.name),
                               onHeard: heard)
                     LazyVGrid(columns: NoteGrid.columns, spacing: 12) {
-                        ForEach(Verb.allCases) { verb in
+                        ForEach(verbs) { verb in
                             Button {
                                 path.append(.thing(verb))
                             } label: {
                                 StickyNote(text: verb.title, fill: theme.tap1)
                             }
                             .buttonStyle(NoteButtonStyle())
+                            .contextMenu {
+                                if verb.isBuiltIn {
+                                    Button("Hide", systemImage: "eye.slash") {
+                                        VerbStore.setHidden(true, for: verb)
+                                    }
+                                } else {
+                                    Button("Remove", systemImage: "trash", role: .destructive) {
+                                        VerbStore.remove(verb)
+                                    }
+                                }
+                                Button("Edit verbs", systemImage: "slider.horizontal.3") {
+                                    editingVerbs = true
+                                }
+                            }
+                        }
+                        Button {
+                            newVerb = ""
+                            addingVerb = true
+                        } label: {
+                            StickyNote(text: "+ New", fill: theme.tap1)
+                        }
+                        .buttonStyle(NoteButtonStyle())
+                    }
+                    .alert("New verb", isPresented: $addingVerb) {
+                        TextField("Text, Clean, Water…", text: $newVerb)
+                            .textInputAutocapitalization(.words)
+                        Button("Add") {
+                            // Straight on to the second tap, like + New for things.
+                            if let verb = VerbStore.add(newVerb) {
+                                path.append(.thing(verb))
+                            }
+                        }
+                        Button("Cancel", role: .cancel) {}
+                    } message: {
+                        Text("One word for what you need to do.")
+                    }
+                    .sheet(isPresented: $editingVerbs) {
+                        NavigationStack {
+                            VerbEditorView()
+                                .toolbar {
+                                    ToolbarItem(placement: .topBarTrailing) {
+                                        Button("Close", systemImage: "xmark") { editingVerbs = false }
+                                    }
+                                }
                         }
                     }
                     if !hotKeys.isEmpty {
@@ -143,6 +193,10 @@ struct HomeView: View {
                     // Already handled somewhere else.
                     Color.clear.onAppear { alerts.current = nil }
                 }
+            }
+            .onChange(of: verbLayoutJSON) {
+                // Lets Siri hear added verbs in "Remind me in Nabbit to …".
+                NabbitShortcuts.updateAppShortcutParameters()
             }
             .onChange(of: capture.count) {
                 // The New reminder control: back to the verb grid.
