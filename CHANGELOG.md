@@ -5,6 +5,11 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+- A big mic button above the verbs: say "call the dentist tomorrow at
+  3" and it's saved, with Undo. Say less and it opens the next step,
+  so "call the dentist" asks when. It listens on your iPhone and stops
+  on its own when you pause
+
 - Add a Next up widget for the Home Screen and Lock Screen, with a Done
   button right on it, and a New reminder control for Control Center and
   the Action button that opens Nabbit ready to go. Settings and

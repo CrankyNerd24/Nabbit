@@ -2,8 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>NSAlarmKitUsageDescription</key>
-	<string>Rings when a reminder comes due, even on silent.</string>
 	<key>CFBundleSpokenName</key>
 	<string>Nabbit</string>
 	<key>INAlternativeAppNames</key>
@@ -21,5 +19,11 @@
 			<string>nab it</string>
 		</dict>
 	</array>
+	<key>NSAlarmKitUsageDescription</key>
+	<string>Rings when a reminder comes due, even on silent.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Hears the reminder you say to the mic button.</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>Turns what you say into a reminder, right on your iPhone.</string>
 </dict>
 </plist>

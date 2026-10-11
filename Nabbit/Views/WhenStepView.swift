@@ -65,21 +65,7 @@ struct WhenStepView: View {
     }
 
     private func save(at date: Date) {
-        let reminder = Reminder(verb: verb, thing: thing, dueDate: date)
-        context.insert(reminder)
-
-        let raw = verb.rawValue
-        let name = thing
-        let match = FetchDescriptor<Thing>(predicate: #Predicate { $0.verbRaw == raw && $0.name == name })
-        try? context.fetch(match).first?.markUsed()
-
-        try? context.save()
+        let reminder = CaptureStore.save(verb: verb, thing: thing, due: date, in: context)
         onSaved("Got it. \(reminder.text), \(date.dueDescription()).")
-
-        // Asked on the first save, when it's clear what the permission is for.
-        Task {
-            await Nudges.requestPermission()
-            Nudges.shared.reschedule()
-        }
     }
 }

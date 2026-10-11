@@ -8,6 +8,7 @@ struct HomeView: View {
     @Query(filter: #Predicate<Reminder> { $0.completedAt == nil }, sort: \Reminder.dueDate, animation: .snappy)
     private var open: [Reminder]
     @Query(HomeView.recentlyDone) private var recentlyDone: [Reminder]
+    @Query private var things: [Thing]
     @State private var alerts = AlertCenter.shared
     @State private var capture = CaptureRequest.shared
     @State private var path: [CaptureStep] = []
@@ -60,6 +61,9 @@ struct HomeView: View {
                     if !againItems.isEmpty {
                         againStrip
                     }
+                    MicButton(theme: theme,
+                              hints: Verb.allCases.map(\.title) + things.map(\.name),
+                              onHeard: heard)
                     LazyVGrid(columns: NoteGrid.columns, spacing: 12) {
                         ForEach(Verb.allCases) { verb in
                             Button {
@@ -169,6 +173,35 @@ struct HomeView: View {
             case .snooze15, .tonight:
                 banner = Banner(text: "\(reminder.thing) moved to \(reminder.dueDate.dueDescription()).")
             }
+        }
+    }
+
+    /// Saves a spoken reminder outright when it has all three parts, or opens the
+    /// three-tap flow at the first missing one.
+    private func heard(_ text: String) {
+        let spoken = VoiceParser.parse(text)
+        guard let verb = spoken.verb else {
+            withAnimation {
+                banner = Banner(text: "Missed that. Say it like this: call the dentist tomorrow.")
+            }
+            return
+        }
+        guard let said = spoken.thing else {
+            path = [.thing(verb)]
+            return
+        }
+        let thing = CaptureStore.thing(matching: said, verb: verb, in: context)
+        guard let due = spoken.due else {
+            path = [.thing(verb), .when(verb, thing: thing)]
+            return
+        }
+        let reminder = CaptureStore.save(verb: verb, thing: thing, due: due, in: context)
+        withAnimation {
+            banner = Banner(text: "Got it. \(reminder.text), \(due.dueDescription()).", undo: {
+                Nudges.shared.clearDelivered(for: reminder)
+                context.delete(reminder)
+                Nudges.shared.saveAndReschedule()
+            })
         }
     }
 
