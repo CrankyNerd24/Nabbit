@@ -113,6 +113,13 @@ Out of scope for v1: categories, tags, notes fields, calendar sync, sharing, acc
 7. Widgets, Action button, Control Center
 8. Apple Watch
 
+## Changelog
+
+- `CHANGELOG.md` follows Semantic Versioning, newest first, with an `## [Unreleased]` section at the top.
+- Every commit that changes the app adds one bullet under `## [Unreleased]` in that same commit: plain words for someone using the app, what changed and why it matters, no trailing period, wrapped at about 72 characters, a blank line between bullets. Build-only fixes can use the commit subject.
+- To release: bump `MARKETING_VERSION` in a commit titled "Bump marketing version to X.Y.Z", then a commit titled "Release X.Y.Z in the changelog" that adds `## [X.Y.Z] - YYYY-MM-DD` under `## [Unreleased]`, so everything below it belongs to that version.
+- `.githooks/post-commit` appends a commit's subject under `## [Unreleased]` if no bullet for it exists. Enable it once per clone with `git config core.hooksPath .githooks`.
+
 ## Project layout
 
 - `Nabbit.xcodeproj` uses a synchronized folder: any file added under `Nabbit/` is in the target automatically.
