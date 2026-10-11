@@ -19,10 +19,6 @@ final class Nudges: NSObject, UNUserNotificationCenterDelegate {
     /// Read from the nonisolated delegate callbacks.
     nonisolated private static let reminderKey = "reminder"
 
-    private enum Action: String {
-        case done, snooze15, tonight
-    }
-
     /// Set at launch so notification buttons can reach the store without the UI.
     var container: ModelContainer?
 
@@ -36,17 +32,58 @@ final class Nudges: NSObject, UNUserNotificationCenterDelegate {
     }
 
     static func registerCategories() {
-        let actions = [
-            UNNotificationAction(identifier: Action.done.rawValue, title: "Done"),
-            UNNotificationAction(identifier: Action.snooze15.rawValue, title: "15 min"),
-            UNNotificationAction(identifier: Action.tonight.rawValue, title: "Tonight"),
-        ]
+        let actions = ReminderAction.allCases.map {
+            UNNotificationAction(identifier: $0.rawValue, title: $0.title)
+        }
         let category = UNNotificationCategory(identifier: categoryID, actions: actions, intentIdentifiers: [])
         UNUserNotificationCenter.current().setNotificationCategories([category])
     }
 
     static func requestPermission() async {
         _ = try? await UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound])
+    }
+
+    /// The nudge a reminder is on right now: 0 for the first alert, up to `count`.
+    static func step(for reminder: Reminder, at now: Date = .now) -> Int {
+        let elapsed = now.timeIntervalSince(reminder.dueDate)
+        return min(max(Int(elapsed / interval), 0), count)
+    }
+
+    /// Applies a button press from anywhere: a notification, the alert, or the Today list.
+    func perform(_ action: ReminderAction, on reminder: Reminder) {
+        switch action {
+        case .done:
+            reminder.complete()
+        case .snooze15:
+            reminder.snooze(until: .now.addingTimeInterval(15 * 60))
+        case .tonight:
+            reminder.snooze(until: WhenPreset.tonight.date() ?? .now.addingTimeInterval(60 * 60))
+        }
+        clearDelivered(for: reminder)
+        saveAndReschedule()
+    }
+
+    func saveAndReschedule() {
+        try? container?.mainContext.save()
+        reschedule()
+    }
+
+    /// Takes a reminder's alerts out of Notification Center once it's handled.
+    func clearDelivered(for reminder: Reminder) {
+        let ids = (0...Self.count).map { "\(reminder.uuid.uuidString)-\($0)" }
+        UNUserNotificationCenter.current().removeDeliveredNotifications(withIdentifiers: ids)
+    }
+
+    /// Brings up the full-screen alert for the earliest reminder that's due and not yet slipped.
+    func showDueAlert() {
+        guard AlertCenter.shared.current == nil, let container else { return }
+        let now = Date.now
+        let due = FetchDescriptor<Reminder>(predicate: #Predicate { $0.completedAt == nil && $0.dueDate <= now },
+                                            sortBy: [SortDescriptor(\.dueDate)])
+        let reminders = (try? container.mainContext.fetch(due)) ?? []
+        if let first = reminders.first(where: { !$0.isSlipped }) {
+            AlertCenter.shared.show(first.uuid)
+        }
     }
 
     /// Replaces every pending notification with the soonest ones across all open reminders.
@@ -101,9 +138,13 @@ final class Nudges: NSObject, UNUserNotificationCenterDelegate {
 
     // MARK: - UNUserNotificationCenterDelegate
 
+    /// With the app open, the full-screen alert takes over instead of a banner.
     nonisolated func userNotificationCenter(_ center: UNUserNotificationCenter,
                                             willPresent notification: UNNotification) async -> UNNotificationPresentationOptions {
-        [.banner, .list, .sound]
+        guard let id = notification.request.content.userInfo[Self.reminderKey] as? String,
+              let uuid = UUID(uuidString: id) else { return [.banner, .list, .sound] }
+        await AlertCenter.shared.show(uuid)
+        return [.list, .sound]
     }
 
     nonisolated func userNotificationCenter(_ center: UNUserNotificationCenter,
@@ -114,22 +155,16 @@ final class Nudges: NSObject, UNUserNotificationCenterDelegate {
     }
 
     private func handle(action: String, reminderID: String) {
-        guard let container,
-              let action = Action(rawValue: action),
-              let uuid = UUID(uuidString: reminderID) else { return }
-        let context = container.mainContext
-        let match = FetchDescriptor<Reminder>(predicate: #Predicate { $0.uuid == uuid })
-        guard let reminder = try? context.fetch(match).first else { return }
-
-        switch action {
-        case .done:
-            reminder.complete()
-        case .snooze15:
-            reminder.snooze(until: .now.addingTimeInterval(15 * 60))
-        case .tonight:
-            reminder.snooze(until: WhenPreset.tonight.date() ?? .now.addingTimeInterval(60 * 60))
+        guard let container, let uuid = UUID(uuidString: reminderID) else { return }
+        // Tapping the notification itself opens the full-screen alert.
+        guard let action = ReminderAction(rawValue: action) else {
+            if action == UNNotificationDefaultActionIdentifier {
+                AlertCenter.shared.show(uuid)
+            }
+            return
         }
-        try? context.save()
-        reschedule()
+        let match = FetchDescriptor<Reminder>(predicate: #Predicate { $0.uuid == uuid })
+        guard let reminder = try? container.mainContext.fetch(match).first else { return }
+        perform(action, on: reminder)
     }
 }

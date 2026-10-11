@@ -28,6 +28,7 @@ struct NabbitApp: App {
             // Tops the rolling batch back up each time the app comes forward.
             if scenePhase == .active {
                 Nudges.shared.reschedule()
+                Nudges.shared.showDueAlert()
             }
         }
     }

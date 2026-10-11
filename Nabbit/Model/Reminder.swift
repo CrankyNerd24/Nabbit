@@ -36,6 +36,10 @@ final class Reminder {
         completedAt = .now
     }
 
+    func reopen() {
+        completedAt = nil
+    }
+
     func snooze(until date: Date) {
         dueDate = date
         snoozeCount += 1
