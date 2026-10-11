@@ -55,9 +55,6 @@ struct HomeView: View {
                 VStack(alignment: .leading, spacing: 20) {
                     TodayList(reminders: open, theme: theme,
                               onAction: { act($1, on: $0) }, onRemove: remove)
-                    if !winsToday.isEmpty {
-                        winsStrip
-                    }
                     MicButton(theme: theme,
                               hints: Verb.allCases.map(\.title) + things.map(\.name),
                               onHeard: heard)
@@ -73,6 +70,9 @@ struct HomeView: View {
                     }
                     if !againItems.isEmpty {
                         againStrip
+                    }
+                    if !winsToday.isEmpty {
+                        winsStrip
                     }
                 }
                 .padding()
