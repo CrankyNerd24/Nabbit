@@ -124,6 +124,7 @@ Out of scope for v1: categories, tags, notes fields, calendar sync, sharing, acc
 - `Alarms` rings each reminder's first alert through AlarmKit (soonest 20). The system's Stop only silences it, so the nudges still come; its Open button (`OpenAlarmIntent`) launches the full-screen alert. Reminders with an alarm skip the first notification. No widget extension, since there's no countdown presentation.
 - `Store.container` is the single SwiftData container, opened on first use so intents can reach it.
 - Deployment target is iOS 26.1, for AlarmKit's current `Alert` initializer.
+- `Nabbit/Info.plist` holds keys Xcode has no build setting for (`NSAlarmKitUsageDescription`). It merges with the generated plist and is excluded from the synced folder's resources.
 - `Nabbit/Views`: SwiftUI screens.
 - Settings live in `@AppStorage`; keys are static constants on the type that owns them (`Theme.storageKey`, `DefaultTimes.tonightHourKey`).
 - Default actor isolation is MainActor (Swift 5 mode, approachable concurrency).

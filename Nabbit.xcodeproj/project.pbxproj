@@ -10,9 +10,22 @@
 		043C96E3307C02F300750FFA /* Nabbit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Nabbit.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		043C96F1307C02F500750FFA /* Exceptions for "Nabbit" folder in "Nabbit" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 043C96E2307C02F300750FFA /* Nabbit */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		043C96E5307C02F300750FFA /* Nabbit */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				043C96F1307C02F500750FFA /* Exceptions for "Nabbit" folder in "Nabbit" target */,
+			);
 			path = Nabbit;
 			sourceTree = "<group>";
 		};
@@ -252,8 +265,8 @@
 				DEVELOPMENT_TEAM = H47J9P9TQ3;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Nabbit/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
-				INFOPLIST_KEY_NSAlarmKitUsageDescription = "Rings when a reminder comes due, even on silent.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -288,8 +301,8 @@
 				DEVELOPMENT_TEAM = H47J9P9TQ3;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Nabbit/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
-				INFOPLIST_KEY_NSAlarmKitUsageDescription = "Rings when a reminder comes due, even on silent.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
