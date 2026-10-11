@@ -2,8 +2,9 @@ import Foundation
 import SwiftData
 import UserNotifications
 
-/// Schedules each reminder's alert and its follow-up nudges as local notifications,
-/// and handles the Done / 15 min / Tonight buttons on them.
+/// Schedules each reminder's alert and its follow-up nudges as local notifications
+/// (the first alert rings through `Alarms` when allowed), and handles the
+/// Done / 15 min / Tonight buttons on them.
 final class Nudges: NSObject, UNUserNotificationCenterDelegate {
     static let shared = Nudges()
 
@@ -19,8 +20,8 @@ final class Nudges: NSObject, UNUserNotificationCenterDelegate {
     /// Read from the nonisolated delegate callbacks.
     nonisolated private static let reminderKey = "reminder"
 
-    /// Set at launch so notification buttons can reach the store without the UI.
-    var container: ModelContainer?
+    private var container: ModelContainer { Store.container }
+    private var alarmTask: Task<Void, Never>?
 
     static var interval: TimeInterval {
         let minutes = UserDefaults.standard.object(forKey: intervalKey) as? Int ?? defaultMinutes
@@ -39,8 +40,10 @@ final class Nudges: NSObject, UNUserNotificationCenterDelegate {
         UNUserNotificationCenter.current().setNotificationCategories([category])
     }
 
+    /// Notifications for the nudges, then alarms for the first alert.
     static func requestPermission() async {
         _ = try? await UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound])
+        await Alarms.requestPermission()
     }
 
     /// The nudge a reminder is on right now: 0 for the first alert, up to `count`.
@@ -64,7 +67,7 @@ final class Nudges: NSObject, UNUserNotificationCenterDelegate {
     }
 
     func saveAndReschedule() {
-        try? container?.mainContext.save()
+        try? container.mainContext.save()
         reschedule()
     }
 
@@ -76,7 +79,7 @@ final class Nudges: NSObject, UNUserNotificationCenterDelegate {
 
     /// Brings up the full-screen alert for the earliest reminder that's due and not yet slipped.
     func showDueAlert() {
-        guard AlertCenter.shared.current == nil, let container else { return }
+        guard AlertCenter.shared.current == nil else { return }
         let now = Date.now
         let due = FetchDescriptor<Reminder>(predicate: #Predicate { $0.completedAt == nil && $0.dueDate <= now },
                                             sortBy: [SortDescriptor(\.dueDate)])
@@ -86,14 +89,27 @@ final class Nudges: NSObject, UNUserNotificationCenterDelegate {
         }
     }
 
-    /// Replaces every pending notification with the soonest ones across all open reminders.
+    /// Replaces every pending notification and alarm with the soonest ones across all open reminders.
     func reschedule() {
-        guard let container else { return }
-        let open = FetchDescriptor<Reminder>(predicate: #Predicate { $0.completedAt == nil })
+        let open = FetchDescriptor<Reminder>(predicate: #Predicate { $0.completedAt == nil },
+                                             sortBy: [SortDescriptor(\.dueDate)])
         let reminders = (try? container.mainContext.fetch(open)) ?? []
         let now = Date.now
+
+        // Reminders whose first alert rings as an alarm skip the matching notification.
+        let alarmed = Alarms.isAuthorized
+            ? Array(reminders.filter { $0.dueDate > now }.prefix(Alarms.limit))
+            : []
+        let alarmedIDs = Set(alarmed.map(\.uuid))
+        let previous = alarmTask
+        alarmTask = Task {
+            previous?.cancel()
+            await previous?.value
+            await Alarms.sync(alarmed)
+        }
+
         let upcoming = reminders
-            .flatMap(Self.requests(for:))
+            .flatMap { Self.requests(for: $0, skipFirst: alarmedIDs.contains($0.uuid)) }
             .filter { $0.date > now }
             .sorted { $0.date < $1.date }
             .prefix(Self.pendingLimit)
@@ -106,8 +122,9 @@ final class Nudges: NSObject, UNUserNotificationCenterDelegate {
     }
 
     /// The alert at the due time, then a nudge every interval.
-    private static func requests(for reminder: Reminder) -> [(date: Date, request: UNNotificationRequest)] {
-        (0...count).map { step in
+    private static func requests(for reminder: Reminder,
+                                 skipFirst: Bool) -> [(date: Date, request: UNNotificationRequest)] {
+        ((skipFirst ? 1 : 0)...count).map { step in
             let date = reminder.dueDate.addingTimeInterval(Double(step) * interval)
             let content = UNMutableNotificationContent()
             content.title = reminder.text
@@ -155,7 +172,7 @@ final class Nudges: NSObject, UNUserNotificationCenterDelegate {
     }
 
     private func handle(action: String, reminderID: String) {
-        guard let container, let uuid = UUID(uuidString: reminderID) else { return }
+        guard let uuid = UUID(uuidString: reminderID) else { return }
         // Tapping the notification itself opens the full-screen alert.
         guard let action = ReminderAction(rawValue: action) else {
             if action == UNNotificationDefaultActionIdentifier {

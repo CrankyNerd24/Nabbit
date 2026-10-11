@@ -121,6 +121,9 @@ Out of scope for v1: categories, tags, notes fields, calendar sync, sharing, acc
 - `Nabbit/Alerts`: `Nudges` schedules each reminder's alert plus its nudges as time-sensitive local notifications (soonest 60 only, refilled whenever the app comes forward) and handles their Done / 15 min / Tonight buttons. Slipped is worked out from the clock, since nudges fire while the app isn't running.
 - `ReminderAction` is the three buttons (Done / 15 min / Tonight); `Nudges.perform` applies one from any of the three places they appear (notification, full-screen alert, Today list).
 - `AlertCenter` holds which reminder the full-screen `AlertView` is showing. It opens when a notification arrives with the app open, when a notification is tapped, or when the app comes forward with something due.
+- `Alarms` rings each reminder's first alert through AlarmKit (soonest 20). The system's Stop only silences it, so the nudges still come; its Open button (`OpenAlarmIntent`) launches the full-screen alert. Reminders with an alarm skip the first notification. No widget extension, since there's no countdown presentation.
+- `Store.container` is the single SwiftData container, opened on first use so intents can reach it.
+- Deployment target is iOS 26.1, for AlarmKit's current `Alert` initializer.
 - `Nabbit/Views`: SwiftUI screens.
 - Settings live in `@AppStorage`; keys are static constants on the type that owns them (`Theme.storageKey`, `DefaultTimes.tonightHourKey`).
 - Default actor isolation is MainActor (Swift 5 mode, approachable concurrency).
