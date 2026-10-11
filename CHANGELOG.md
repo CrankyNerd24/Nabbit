@@ -5,6 +5,10 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+- Move and Cancel show up in Shortcuts and Siri even before you have
+  any reminders: "Move a reminder in Nabbit" and "Cancel a reminder in
+  Nabbit" ask which one
+
 - Start a changelog, with a post-commit hook in .githooks that logs any
   commit whose subject isn't already here
 

@@ -1,7 +1,8 @@
 import AppIntents
 
 /// Every phrase names the app. Apple allows one variable per phrase, so Siri
-/// asks for the rest ("Call who?", "When?").
+/// asks for the rest ("Call who?", "When?"). Each shortcut also needs one phrase
+/// without a reminder in it: iOS skips reminder phrases while there are none.
 nonisolated struct NabbitShortcuts: AppShortcutsProvider {
     static var appShortcuts: [AppShortcut] {
         AppShortcut(intent: CreateReminderIntent(), phrases: [
@@ -26,6 +27,7 @@ nonisolated struct NabbitShortcuts: AppShortcutsProvider {
         AppShortcut(intent: MoveReminderIntent(), phrases: [
             "Move \(\.$reminder) in \(.applicationName)",
             "\(.applicationName), move \(\.$reminder)",
+            "Move a reminder in \(.applicationName)",
         ], shortTitle: "Move reminder", systemImageName: "calendar")
 
         AppShortcut(intent: CheckListIntent(), phrases: [
@@ -36,6 +38,7 @@ nonisolated struct NabbitShortcuts: AppShortcutsProvider {
         AppShortcut(intent: CancelReminderIntent(), phrases: [
             "Cancel \(\.$reminder) in \(.applicationName)",
             "\(.applicationName), cancel \(\.$reminder)",
+            "Cancel a reminder in \(.applicationName)",
         ], shortTitle: "Cancel reminder", systemImageName: "trash")
     }
 }
