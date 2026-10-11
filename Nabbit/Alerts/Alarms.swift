@@ -1,3 +1,4 @@
+import ActivityKit
 import AlarmKit
 import AppIntents
 import SwiftUI
@@ -52,7 +53,7 @@ enum Alarms {
 nonisolated struct NabbitAlarm: AlarmMetadata {}
 
 /// The alarm's Open button: launches Nabbit into the full-screen alert.
-nonisolated struct OpenAlarmIntent: LiveActivityIntent {
+struct OpenAlarmIntent: LiveActivityIntent {
     static let title: LocalizedStringResource = "Open reminder"
     static let openAppWhenRun = true
 
@@ -67,7 +68,7 @@ nonisolated struct OpenAlarmIntent: LiveActivityIntent {
 
     func perform() async throws -> some IntentResult {
         if let uuid = UUID(uuidString: reminderID) {
-            await MainActor.run { AlertCenter.shared.show(uuid) }
+            AlertCenter.shared.show(uuid)
         }
         return .result()
     }
