@@ -3,30 +3,32 @@ import SwiftData
 
 @Model
 final class Reminder {
+    /// Ties notifications and their Done / 15 min / Tonight buttons back to this reminder.
+    var uuid: UUID = UUID()
     var verbRaw: String
     var thing: String
     var dueDate: Date
     var createdAt: Date
     var completedAt: Date?
-    /// Nudges already fired for the current due date. Reset when snoozed.
-    var nudgesSent: Int
     var snoozeCount: Int
-
-    /// After this many nudges the alert goes quiet and the reminder shows as slipped.
-    static let maxNudges = 3
 
     var verb: Verb { Verb(rawValue: verbRaw) ?? .call }
     var text: String { "\(verb.title) \(thing)" }
     var isDone: Bool { completedAt != nil }
-    var isSlipped: Bool { !isDone && nudgesSent >= Self.maxNudges }
+
+    /// Past the last nudge and still open. Worked out from the clock, since
+    /// nudges fire while the app isn't running.
+    var isSlipped: Bool {
+        !isDone && Date.now >= Nudges.lastNudgeDate(after: dueDate)
+    }
 
     init(verb: Verb, thing: String, dueDate: Date) {
+        self.uuid = UUID()
         self.verbRaw = verb.rawValue
         self.thing = thing
         self.dueDate = dueDate
         self.createdAt = .now
         self.completedAt = nil
-        self.nudgesSent = 0
         self.snoozeCount = 0
     }
 
@@ -36,7 +38,6 @@ final class Reminder {
 
     func snooze(until date: Date) {
         dueDate = date
-        nudgesSent = 0
         snoozeCount += 1
     }
 }

@@ -118,6 +118,7 @@ Out of scope for v1: categories, tags, notes fields, calendar sync, sharing, acc
 - `Nabbit.xcodeproj` uses a synchronized folder: any file added under `Nabbit/` is in the target automatically.
 - `Nabbit/Model`: SwiftData models (`Reminder`, `Thing`) and the fixed lists (`Verb`, `WhenPreset`). Enums are stored as raw strings so predicates work.
 - `Nabbit/Theme`: the five themes and `ThemeColor`, which picks the text color by WCAG contrast.
+- `Nabbit/Alerts`: `Nudges` schedules each reminder's alert plus its nudges as time-sensitive local notifications (soonest 60 only, refilled whenever the app comes forward) and handles their Done / 15 min / Tonight buttons. Slipped is worked out from the clock, since nudges fire while the app isn't running.
 - `Nabbit/Views`: SwiftUI screens.
 - Settings live in `@AppStorage`; keys are static constants on the type that owns them (`Theme.storageKey`, `DefaultTimes.tonightHourKey`).
 - Default actor isolation is MainActor (Swift 5 mode, approachable concurrency).

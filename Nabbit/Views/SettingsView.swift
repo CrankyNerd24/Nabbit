@@ -5,6 +5,8 @@ struct SettingsView: View {
     @AppStorage(Theme.storageKey) private var themeID = Theme.ember.id
     @AppStorage(DefaultTimes.tonightHourKey) private var tonightHour = 19
     @AppStorage(DefaultTimes.morningHourKey) private var morningHour = 9
+    @AppStorage(Nudges.intervalKey) private var nudgeMinutes = Nudges.defaultMinutes
+    @Environment(\.modelContext) private var context
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
@@ -42,6 +44,30 @@ struct SettingsView: View {
                         ForEach(5..<12, id: \.self) { Text(hourLabel($0)).tag($0) }
                     }
                 }
+
+                Section {
+                    Picker("Nudge every", selection: $nudgeMinutes) {
+                        ForEach(nudgeChoices, id: \.self) { Text("\($0) min").tag($0) }
+                    }
+                    .onChange(of: nudgeMinutes) { Nudges.shared.reschedule() }
+                } header: {
+                    Text("Nudges")
+                } footer: {
+                    Text("If it's not done, Nabbit nudges you \(Nudges.count) more times, then goes quiet.")
+                }
+
+                #if DEBUG
+                Section("Testing") {
+                    Button("Alert in 10 seconds") {
+                        context.insert(Reminder(verb: .call, thing: "Dentist", dueDate: .now.addingTimeInterval(10)))
+                        try? context.save()
+                        Task {
+                            await Nudges.requestPermission()
+                            Nudges.shared.reschedule()
+                        }
+                    }
+                }
+                #endif
             }
             .navigationTitle("Settings")
             .navigationBarTitleDisplayMode(.inline)
@@ -51,6 +77,14 @@ struct SettingsView: View {
                 }
             }
         }
+    }
+
+    private var nudgeChoices: [Int] {
+        #if DEBUG
+        return [1, 5, 10, 15, 20, 30]
+        #else
+        return [5, 10, 15, 20, 30]
+        #endif
     }
 
     private func hourLabel(_ hour: Int) -> String {

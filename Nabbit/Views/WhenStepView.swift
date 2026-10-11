@@ -73,6 +73,13 @@ struct WhenStepView: View {
         let match = FetchDescriptor<Thing>(predicate: #Predicate { $0.verbRaw == raw && $0.name == name })
         try? context.fetch(match).first?.markUsed()
 
+        try? context.save()
         onSaved("Got it. \(reminder.text), \(date.dueDescription()).")
+
+        // Asked on the first save, when it's clear what the permission is for.
+        Task {
+            await Nudges.requestPermission()
+            Nudges.shared.reschedule()
+        }
     }
 }

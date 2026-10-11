@@ -28,6 +28,20 @@ enum Verb: String, CaseIterable, Codable, Identifiable {
         }
     }
 
+    /// The short push at the end of an alert.
+    var push: String {
+        switch self {
+        case .call: "It's a two-minute call."
+        case .pickUp: "Keys, shoes, go."
+        case .take: "Glass of water. Done."
+        case .pay: "Two minutes and it's paid."
+        case .buy: "Add it to the cart now."
+        case .email: "Three lines is plenty."
+        case .book: "One call or one click."
+        case .goTo: "Shoes on. Out the door."
+        }
+    }
+
     /// Things offered on the second tap before the user has added any.
     var starterThings: [String] {
         switch self {
