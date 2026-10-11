@@ -76,3 +76,10 @@ struct OpenAlarmIntent: LiveActivityIntent {
         return .result()
     }
 }
+
+// Older systems, and AlarmKit's alarm buttons, still look for this flag. Apple's
+// documented way to keep it alongside supportedModes without a warning.
+@available(*, deprecated)
+extension OpenAlarmIntent {
+    static var openAppWhenRun: Bool { true }
+}
