@@ -125,6 +125,7 @@ Out of scope for v1: categories, tags, notes fields, calendar sync, sharing, acc
 - `Store.container` is the single SwiftData container, opened on first use so intents can reach it.
 - Deployment target is iOS 26.1, for AlarmKit's current `Alert` initializer.
 - `Nabbit/Info.plist` holds keys Xcode has no build setting for (`NSAlarmKitUsageDescription`). It merges with the generated plist and is excluded from the synced folder's resources.
+- `Nabbit/Celebration`: `Celebration` sizes a Done (small / medium / big / clear board) before the reminder is marked done, and `CelebrationLines` rotates the copy without repeats. `CelebrationOverlay` draws confetti (a color flash with Reduce Motion) and never takes taps; `Haptics` plays the Core Haptics thump. Today rows peel off with `.peel`. Only Done from the app celebrates, not the notification button.
 - `Nabbit/Views`: SwiftUI screens.
 - Settings live in `@AppStorage`; keys are static constants on the type that owns them (`Theme.storageKey`, `DefaultTimes.tonightHourKey`).
 - Default actor isolation is MainActor (Swift 5 mode, approachable concurrency).

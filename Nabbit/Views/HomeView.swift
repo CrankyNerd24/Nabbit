@@ -5,11 +5,13 @@ struct HomeView: View {
     @AppStorage(Theme.storageKey) private var themeID = Theme.ember.id
     @Environment(\.modelContext) private var context
     @Query(HomeView.recentReminders) private var recent: [Reminder]
-    @Query(filter: #Predicate<Reminder> { $0.completedAt == nil }, sort: \Reminder.dueDate)
+    @Query(filter: #Predicate<Reminder> { $0.completedAt == nil }, sort: \Reminder.dueDate, animation: .snappy)
     private var open: [Reminder]
+    @Query(HomeView.recentlyDone) private var recentlyDone: [Reminder]
     @State private var alerts = AlertCenter.shared
     @State private var path: [CaptureStep] = []
     @State private var banner: Banner?
+    @State private var celebration: Celebration?
     @State private var showingSettings = false
 
     private var theme: Theme { Theme.named(themeID) }
@@ -18,6 +20,21 @@ struct HomeView: View {
         var descriptor = FetchDescriptor<Reminder>(sortBy: [SortDescriptor(\.createdAt, order: .reverse)])
         descriptor.fetchLimit = 30
         return descriptor
+    }
+
+    private static var recentlyDone: FetchDescriptor<Reminder> {
+        var descriptor = FetchDescriptor<Reminder>(predicate: #Predicate { $0.completedAt != nil },
+                                                   sortBy: [SortDescriptor(\.dueDate, order: .reverse)])
+        descriptor.fetchLimit = 40
+        return descriptor
+    }
+
+    /// Finished today, newest first. No counts, no streaks.
+    private var winsToday: [Reminder] {
+        let today = Calendar.current.startOfDay(for: .now)
+        return recentlyDone
+            .filter { ($0.completedAt ?? .distantPast) >= today }
+            .sorted { ($0.completedAt ?? .distantPast) > ($1.completedAt ?? .distantPast) }
     }
 
     /// The latest distinct verb and thing pairs, for one-tap repeats.
@@ -36,6 +53,9 @@ struct HomeView: View {
                 VStack(alignment: .leading, spacing: 20) {
                     TodayList(reminders: open, theme: theme,
                               onAction: { act($1, on: $0) }, onRemove: remove)
+                    if !winsToday.isEmpty {
+                        winsStrip
+                    }
                     if !againItems.isEmpty {
                         againStrip
                     }
@@ -80,6 +100,17 @@ struct HomeView: View {
                     bannerView(banner)
                 }
             }
+            .overlay {
+                if let celebration {
+                    CelebrationOverlay(celebration: celebration, theme: theme)
+                        .id(celebration.id)
+                }
+            }
+            .task(id: celebration?.id) {
+                guard let celebration else { return }
+                try? await Task.sleep(for: .seconds(CelebrationOverlay.duration(for: celebration.size)))
+                self.celebration = nil
+            }
             .task(id: banner?.id) {
                 guard let banner else { return }
                 try? await Task.sleep(for: .seconds(banner.undo == nil ? 2.5 : 4))
@@ -112,11 +143,16 @@ struct HomeView: View {
     }
 
     private func act(_ action: ReminderAction, on reminder: Reminder) {
+        // Sized before it's marked done, while slipped and nudge state still apply.
+        let size = Celebration.size(for: reminder)
         Nudges.shared.perform(action, on: reminder)
         withAnimation {
             switch action {
             case .done:
-                banner = Banner(text: "Handled.", undo: {
+                let done = Celebration.make(for: reminder, size: clearsBoard(after: reminder) ? .clearBoard : size)
+                celebration = done
+                Haptics.play(done.size)
+                banner = Banner(text: done.line, undo: {
                     reminder.reopen()
                     Nudges.shared.saveAndReschedule()
                 })
@@ -124,6 +160,14 @@ struct HomeView: View {
                 banner = Banner(text: "\(reminder.thing) moved to \(reminder.dueDate.dueDescription()).")
             }
         }
+    }
+
+    /// True when this was the last thing due today.
+    private func clearsBoard(after reminder: Reminder) -> Bool {
+        let calendar = Calendar.current
+        let tomorrow = calendar.startOfDay(for: calendar.date(byAdding: .day, value: 1, to: .now) ?? .now)
+        guard reminder.dueDate < tomorrow else { return false }
+        return !open.contains { !$0.isDone && $0.dueDate < tomorrow }
     }
 
     /// No "are you sure". Undo brings it back.
@@ -160,6 +204,32 @@ struct HomeView: View {
                 .padding(.vertical, 4)
             }
         }
+    }
+
+    /// Small crumpled notes for what's done today.
+    private var winsStrip: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Wins today")
+                .font(.headline)
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 6) {
+                    ForEach(Array(winsToday.enumerated()), id: \.element.id) { index, reminder in
+                        Text(reminder.text)
+                            .font(.caption.weight(.semibold))
+                            .lineLimit(2)
+                            .multilineTextAlignment(.center)
+                            .foregroundStyle(theme.done.text.color)
+                            .padding(8)
+                            .frame(width: 90, height: 54)
+                            .background(theme.done.color.opacity(0.85), in: .rect(cornerRadius: 4))
+                            .rotationEffect(.degrees(index.isMultiple(of: 2) ? -4 : 3))
+                    }
+                }
+                .padding(.vertical, 6)
+                .padding(.horizontal, 4)
+            }
+        }
+        .accessibilityElement(children: .combine)
     }
 
     private func bannerView(_ banner: Banner) -> some View {

@@ -7,6 +7,7 @@ struct TodayList: View {
     let theme: Theme
     let onAction: (Reminder, ReminderAction) -> Void
     let onRemove: (Reminder) -> Void
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         // Redraws each minute so notes flip to slipped on time.
@@ -66,6 +67,7 @@ struct TodayList: View {
             .shadow(color: .black.opacity(0.12), radius: 2, y: 1)
         }
         .buttonStyle(NoteButtonStyle())
+        .transition(reduceMotion ? .opacity : .peel)
         .accessibilityHint("Marks it done")
         .contextMenu {
             Button(ReminderAction.snooze15.title, systemImage: "clock") { onAction(reminder, .snooze15) }
