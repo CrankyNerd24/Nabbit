@@ -4,5 +4,22 @@
 <dict>
 	<key>NSAlarmKitUsageDescription</key>
 	<string>Rings when a reminder comes due, even on silent.</string>
+	<key>CFBundleSpokenName</key>
+	<string>Nabbit</string>
+	<key>INAlternativeAppNames</key>
+	<array>
+		<dict>
+			<key>INAlternativeAppName</key>
+			<string>Nabbit</string>
+			<key>INAlternativeAppNamePronunciationHint</key>
+			<string>nab it</string>
+		</dict>
+		<dict>
+			<key>INAlternativeAppName</key>
+			<string>Nab it</string>
+			<key>INAlternativeAppNamePronunciationHint</key>
+			<string>nab it</string>
+		</dict>
+	</array>
 </dict>
 </plist>

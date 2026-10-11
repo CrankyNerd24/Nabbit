@@ -5,6 +5,9 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+- Tell Siri how "Nabbit" is said, so it treats the name as the app
+  instead of asking whether you meant Notes
+
 - Move and Cancel show up in Shortcuts and Siri even before you have
   any reminders: "Move a reminder in Nabbit" and "Cancel a reminder in
   Nabbit" ask which one
