@@ -5,6 +5,8 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-10-12
+
 - Add privacy manifests and the App Store listing for release
 
 - Nabbit has an icon: a sticky note with bunny ears and a big check, on
