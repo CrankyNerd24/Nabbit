@@ -5,6 +5,8 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+- Add privacy manifests and the App Store listing for release
+
 - Nabbit has an icon: a sticky note with bunny ears and a big check, on
   the iPhone (with dark and tinted versions) and the watch
 
