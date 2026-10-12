@@ -5,6 +5,11 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+- The alarm's second button is now Done instead of Open, so you can
+  finish a reminder right from the alarm, on your iPhone or your watch,
+  without opening the app. Stop still just quiets it, and the nudges
+  follow
+
 - Nabbit on Apple Watch: see Today and Coming up, tap a note for Done,
   15 min, or Tonight, and make a new reminder in three taps from your
   wrist. Hot keys come along, and a Next up complication shows what's

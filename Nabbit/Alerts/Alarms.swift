@@ -30,11 +30,12 @@ enum Alarms {
             if Task.isCancelled { return }
             let id = reminder.uuid
             // The system supplies Stop, which only silences the alarm: nudges keep
-            // coming until it's marked done. Open goes to the full-screen alert.
+            // coming until it's marked done. Done marks it done without opening
+            // anything, so it works from the watch too.
             let alert = AlarmPresentation.Alert(
                 title: LocalizedStringResource(stringLiteral: reminder.text),
-                secondaryButton: AlarmButton(text: "Open", textColor: theme.alert.text.color,
-                                             systemImageName: "arrow.up.forward.app"),
+                secondaryButton: AlarmButton(text: "Done", textColor: theme.alert.text.color,
+                                             systemImageName: "checkmark"),
                 secondaryButtonBehavior: .custom)
             let attributes = AlarmAttributes(presentation: AlarmPresentation(alert: alert),
                                              metadata: NabbitAlarm(),
@@ -43,7 +44,7 @@ enum Alarms {
                 schedule: .fixed(reminder.dueDate),
                 attributes: attributes,
                 stopIntent: nil,
-                secondaryIntent: OpenAlarmIntent(reminderID: id.uuidString),
+                secondaryIntent: CompleteReminderIntent(reminderID: id),
                 sound: .default)
             _ = try? await manager.schedule(id: id, configuration: configuration)
         }
@@ -52,34 +53,9 @@ enum Alarms {
 
 nonisolated struct NabbitAlarm: AlarmMetadata {}
 
-/// The alarm's Open button: launches Nabbit into the full-screen alert.
-struct OpenAlarmIntent: LiveActivityIntent {
-    static let title: LocalizedStringResource = "Open reminder"
-    /// Brings Nabbit forward before `perform` runs.
-    static let supportedModes: IntentModes = .foreground(.immediate)
-
-    @Parameter(title: "Reminder")
-    var reminderID: String
-
-    init() {}
-
-    init(reminderID: String) {
-        self.reminderID = reminderID
+extension Alarms {
+    /// Silences a reminder's alarm if it's ringing.
+    static func stop(_ id: UUID) {
+        try? AlarmManager.shared.stop(id: id)
     }
-
-    func perform() async throws -> some IntentResult {
-        if let uuid = UUID(uuidString: reminderID) {
-            // Open handles it from here, so the alarm stops ringing.
-            try? AlarmManager.shared.stop(id: uuid)
-            await AlertCenter.shared.show(uuid)
-        }
-        return .result()
-    }
-}
-
-// Older systems, and AlarmKit's alarm buttons, still look for this flag. Apple's
-// documented way to keep it alongside supportedModes without a warning.
-@available(*, deprecated)
-extension OpenAlarmIntent {
-    static var openAppWhenRun: Bool { true }
 }

@@ -4,8 +4,8 @@ import Foundation
 // Intents the widgets and controls trigger. Each target has its own `WidgetActions`:
 // the app's does the work, the extension's is empty because these run in the app.
 
-/// The Done button on a widget. A LiveActivityIntent runs in the app's process, so it
-/// clears nudges, alarms, and notifications like any other Done.
+/// The Done button on a widget and on a ringing alarm. A LiveActivityIntent runs in the
+/// app's process, so it clears nudges, alarms, and notifications like any other Done.
 struct CompleteReminderIntent: LiveActivityIntent {
     static let title: LocalizedStringResource = "Mark reminder done"
     static let isDiscoverable = false
