@@ -11,7 +11,7 @@ direct, warm, no guilt, and never the word for repeat alerts other than "nudges"
       extensions, and the watch app: no tracking, no collected data, UserDefaults
       for the app's own settings (CA92.1) and the app group (1C8F.1)
 - [ ] `ITSAppUsesNonExemptEncryption` is NO, so uploads skip the export question
-- [ ] App record created in App Store Connect with bundle ID `CrankyNerdNew.Nabbit`
+- [x] App record created in App Store Connect ("Nabbit - Reminders That Stick", bundle ID `CrankyNerdNew.Nabbit`, SKU CN_Nabbit)
 - [ ] Privacy policy and support URLs live (a simple page is enough; text below)
 - [ ] Archive with the **Nabbit** scheme (Product → Archive, destination
       "Any iOS Device"), then Distribute App → App Store Connect. The watch app
@@ -22,9 +22,12 @@ direct, warm, no guilt, and never the word for repeat alerts other than "nudges"
 
 ## Listing
 
-**Name** (30 max): Nabbit
+**Name** (30 max): Nabbit - Reminders That Stick
 
-**Subtitle** (30 max): Reminders that stick
+"Nabbit" alone was taken. The store name only labels the listing; the Home Screen
+and Siri still say Nabbit.
+
+**Subtitle** (30 max): ADHD planner with big alerts
 
 **Category:** Productivity. Secondary: Health & Fitness, or none.
 
@@ -72,8 +75,10 @@ MADE YOURS
 PRIVATE BY DESIGN
 No account. No ads. No tracking. Your reminders stay on your iPhone and watch.
 
-**Keywords** (100 max, comma-separated, no spaces):
-adhd,reminders,todo,alarm,nudge,sticky,notes,focus,planner,routine,memory,watch,tasks
+**Keywords** (100 max, comma-separated, no spaces). Words already in the name or
+subtitle (reminders, stick, adhd, planner, alerts) count on their own, so they're
+left out here:
+todo,alarm,nudge,sticky,notes,focus,routine,memory,watch,tasks,habit,checklist,meds,to-do,organizer
 
 **Support URL:** a page with a contact email.
 
