@@ -1,0 +1,237 @@
+/* Nabbit site. Colors are the Primary theme; text is the app's warm ink and paper. */
+:root {
+  --yellow: #FFC93C;
+  --blue: #3D7BFF;
+  --coral: #FF5A5F;
+  --navy: #14213D;
+  --teal: #2EC4B6;
+  --ink: #1E1A16;
+  --paper: #FFF6EE;
+
+  --bg: var(--paper);
+  --text: var(--ink);
+  --muted: #5C534A;
+  --card: #FFFFFF;
+  --line: #EADFD3;
+  --link: #1F5FE0;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #17130F;
+    --text: var(--paper);
+    --muted: #C9BCAE;
+    --card: #231D18;
+    --line: #3A3129;
+    --link: #8DB2FF;
+  }
+}
+
+* { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 17px/1.55 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+a { color: var(--link); }
+
+.wrap {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* Header */
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 0;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 800;
+  font-size: 20px;
+  color: var(--text);
+  text-decoration: none;
+}
+.brand img { width: 36px; height: 36px; border-radius: 9px; }
+.top nav a {
+  margin-left: 18px;
+  color: var(--muted);
+  text-decoration: none;
+  font-weight: 600;
+}
+.top nav a:hover { color: var(--text); }
+
+/* Hero */
+.hero {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 40px;
+  align-items: center;
+  padding: 40px 0 56px;
+}
+.hero h1 {
+  font-size: clamp(40px, 7vw, 64px);
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+  margin: 0 0 16px;
+}
+.hero p.lede {
+  font-size: 20px;
+  color: var(--muted);
+  margin: 0 0 28px;
+}
+.badge {
+  display: inline-block;
+  padding: 14px 22px;
+  border-radius: 12px;
+  background: var(--ink);
+  color: var(--paper);
+  font-weight: 700;
+  text-decoration: none;
+}
+@media (prefers-color-scheme: dark) {
+  .badge { background: var(--paper); color: var(--ink); }
+}
+.small { font-size: 14px; color: var(--muted); margin-top: 10px; }
+
+/* Sticky notes */
+.board {
+  position: relative;
+  display: grid;
+  gap: 14px;
+}
+.note {
+  padding: 22px 20px;
+  border-radius: 6px;
+  font-weight: 800;
+  font-size: 26px;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.16);
+}
+.note small {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  opacity: 0.8;
+  margin-bottom: 4px;
+}
+.note.yellow { background: var(--yellow); color: var(--ink); transform: rotate(-2deg); }
+.note.blue   { background: var(--blue);   color: var(--ink); transform: rotate(1.5deg); margin-left: 24px; }
+.note.coral  { background: var(--coral);  color: var(--ink); transform: rotate(-1deg); margin-left: 8px; }
+
+/* Sections */
+section { padding: 48px 0; border-top: 1px solid var(--line); }
+section h2 {
+  font-size: clamp(28px, 4.5vw, 38px);
+  letter-spacing: -0.01em;
+  margin: 0 0 8px;
+}
+section p.sub { color: var(--muted); margin: 0 0 28px; font-size: 19px; }
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 20px;
+}
+.card h3 { margin: 0 0 6px; font-size: 19px; }
+.card p { margin: 0; color: var(--muted); }
+.dot {
+  display: inline-block;
+  width: 12px; height: 12px;
+  border-radius: 3px;
+  margin-right: 8px;
+  vertical-align: 1px;
+}
+
+/* Alert mock */
+.alert {
+  background: var(--navy);
+  color: var(--paper);
+  border-radius: 22px;
+  padding: 28px;
+  max-width: 360px;
+}
+.alert .task { font-size: 34px; font-weight: 800; line-height: 1.1; margin: 0 0 6px; }
+.alert .line { opacity: 0.85; margin: 0 0 20px; }
+.alert .buttons { display: grid; gap: 10px; }
+.alert .buttons span {
+  display: block;
+  text-align: center;
+  padding: 12px;
+  border-radius: 12px;
+  font-weight: 800;
+  color: var(--ink);
+}
+.alert .row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  align-items: center;
+}
+.nudges { list-style: none; padding: 0; margin: 0; }
+.nudges li {
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+}
+.nudges li b { display: block; }
+.nudges li span { color: var(--muted); }
+
+/* Prose pages (privacy, support) */
+.prose { max-width: 720px; padding: 24px 0 64px; }
+.prose h1 { font-size: clamp(34px, 6vw, 48px); margin: 16px 0 6px; letter-spacing: -0.02em; }
+.prose h2 { font-size: 22px; margin: 32px 0 8px; }
+.prose .updated { color: var(--muted); margin: 0 0 24px; }
+.prose details {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 14px 18px;
+  margin: 10px 0;
+}
+.prose summary { font-weight: 700; cursor: pointer; }
+.prose details p { color: var(--muted); margin: 10px 0 0; }
+.callout {
+  background: var(--yellow);
+  color: var(--ink);
+  border-radius: 6px;
+  padding: 18px 20px;
+  font-weight: 700;
+  transform: rotate(-0.6deg);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+}
+
+/* Footer */
+footer {
+  border-top: 1px solid var(--line);
+  padding: 28px 0 48px;
+  color: var(--muted);
+  font-size: 15px;
+}
+footer a { color: var(--muted); margin-right: 16px; }
+
+@media (max-width: 760px) {
+  .hero, .split { grid-template-columns: 1fr; gap: 28px; }
+  .grid { grid-template-columns: 1fr; }
+  .top nav a { margin-left: 12px; }
+  .note.blue { margin-left: 12px; }
+  .board { padding-right: 10px; }
+}

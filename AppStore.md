@@ -80,9 +80,11 @@ subtitle (reminders, stick, adhd, planner, alerts) count on their own, so they'r
 left out here:
 todo,alarm,nudge,sticky,notes,focus,routine,memory,watch,tasks,habit,checklist,meds,to-do,organizer
 
-**Support URL:** a page with a contact email.
+**Support URL:** https://crankynerd24.github.io/Nabbit/support.html
 
-**Privacy policy URL:** a page with the text below.
+**Privacy policy URL:** https://crankynerd24.github.io/Nabbit/privacy.html
+
+**Marketing URL:** https://crankynerd24.github.io/Nabbit/
 
 ## Privacy policy text
 
