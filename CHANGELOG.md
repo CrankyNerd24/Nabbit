@@ -5,6 +5,10 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+- Wins today starts fresh every day, even if Nabbit stays open past
+  midnight, and always shows everything finished today, including
+  things that were due long ago
+
 - Better with VoiceOver, Voice Control, and large text: 15 min, Tonight,
   Remove, Hide, and Remove hot key are actions, not just press-and-hold
   menus; banners are read out and stay up longer, and a two-finger
