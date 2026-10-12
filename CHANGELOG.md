@@ -5,7 +5,7 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
-- Share the Nabbit and NabbitWatch schemes
+## [1.0.0] - 2026-10-12
 
 - Wins today starts fresh every day, even if Nabbit stays open past
   midnight, and always shows everything finished today, including
@@ -20,7 +20,6 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 - TestFlight builds keep the 10-second test alert and 1-minute nudges
   in Settings; App Store builds don't show them
 
-## [1.0.0] - 2026-10-12
 
 - Add privacy manifests and the App Store listing for release
 
