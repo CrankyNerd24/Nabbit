@@ -1,3 +1,4 @@
+import DeclaredAgeRange
 import SwiftData
 import SwiftUI
 import WidgetKit
@@ -8,6 +9,9 @@ struct SettingsView: View {
     @AppStorage(DefaultTimes.tonightHourKey, store: .nabbit) private var tonightHour = 19
     @AppStorage(DefaultTimes.morningHourKey, store: .nabbit) private var morningHour = 9
     @AppStorage(Tone.storageKey, store: .nabbit) private var tone = Tone.plain
+    @AppStorage(AgeGate.floorKey, store: .nabbit) private var ageFloor = 0
+    @Environment(\.requestAgeRange) private var requestAgeRange
+    @State private var gateNote: String?
     @AppStorage(NudgeTiming.intervalKey, store: .nabbit) private var nudgeMinutes = NudgeTiming.defaultMinutes
     @Environment(\.modelContext) private var context
     @Environment(\.dismiss) private var dismiss
@@ -21,8 +25,10 @@ struct SettingsView: View {
                 }
 
                 Section {
-                    Picker("Tone", selection: $tone) {
-                        ForEach(Tone.allCases) { Text($0.title).tag($0) }
+                    Picker("Tone", selection: toneSelection) {
+                        ForEach(Tone.allCases) { option in
+                            Text(label(for: option)).tag(option)
+                        }
                     }
                     .pickerStyle(.segmented)
                     // Nudges already scheduled pick up the new wording.
@@ -30,7 +36,7 @@ struct SettingsView: View {
                 } header: {
                     Text("Tone")
                 } footer: {
-                    Text(tone.sample)
+                    Text(gateNote ?? effectiveTone.sample)
                 }
 
                 Section {
@@ -86,6 +92,56 @@ struct SettingsView: View {
                     Button("Close", systemImage: "xmark") { dismiss() }
                 }
             }
+        }
+    }
+
+    /// Picking an age-gated tone asks for an age range first, once.
+    private var toneSelection: Binding<Tone> {
+        Binding {
+            effectiveTone
+        } set: { picked in
+            gateNote = nil
+            if unlocked(picked) {
+                tone = picked
+            } else {
+                Task { await unlock(picked) }
+            }
+        }
+    }
+
+    /// The saved tone, or Plain if it's gated and not unlocked.
+    private var effectiveTone: Tone {
+        unlocked(tone) ? tone : .plain
+    }
+
+    private func unlocked(_ option: Tone) -> Bool {
+        guard let minimum = AgeGate.minimumAge(for: option) else { return true }
+        return ageFloor >= minimum
+    }
+
+    /// Locked tones show their age: "Salty 16+".
+    private func label(for option: Tone) -> String {
+        guard !unlocked(option), let minimum = AgeGate.minimumAge(for: option) else { return option.title }
+        return "\(option.title) \(minimum)+"
+    }
+
+    private func unlock(_ picked: Tone) async {
+        guard let minimum = AgeGate.minimumAge(for: picked) else { return }
+        do {
+            let response = try await requestAgeRange(ageGates: AgeGate.gates.0, AgeGate.gates.1)
+            guard case let .sharing(range) = response else {
+                gateNote = "\(picked.title) stays locked unless you share your age range."
+                return
+            }
+            // No lower bound means under the lowest gate.
+            ageFloor = range.lowerBound ?? 0
+            if ageFloor >= minimum {
+                tone = picked
+            } else {
+                gateNote = "\(picked.title) unlocks at \(minimum)."
+            }
+        } catch {
+            gateNote = "Age check isn't available here, so \(picked.title) stays locked."
         }
     }
 

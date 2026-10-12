@@ -5,6 +5,10 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+- Salty unlocks at 16 and Sweary at 18. Tapping one asks to see your age
+  range once, through Apple's age-sharing sheet; if you'd rather not
+  share, they stay locked and Plain and Sassy work as always
+
 - Add a Sweary tone next to Plain, Sassy, and Salty, for full swearing:
   "Call Dentist. Right fucking now." Still aimed at the task, never at
   you

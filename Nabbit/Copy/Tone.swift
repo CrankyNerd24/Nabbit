@@ -29,8 +29,10 @@ enum Tone: String, CaseIterable, Identifiable {
         }
     }
 
+    /// The chosen tone, or Plain if it's age-gated and the person hasn't been confirmed old enough.
     static var current: Tone {
-        Tone(rawValue: UserDefaults.nabbit.string(forKey: storageKey) ?? "") ?? .plain
+        let chosen = Tone(rawValue: UserDefaults.nabbit.string(forKey: storageKey) ?? "") ?? .plain
+        return AgeGate.allows(chosen) ? chosen : .plain
     }
 }
 
