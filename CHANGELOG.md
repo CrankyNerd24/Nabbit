@@ -5,6 +5,8 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+- Fix the Help build error and concurrency warnings for archiving
+
 - Settings has Help and FAQ now: quick answers about making reminders,
   alerts and nudges, Siri, widgets, the watch, tones, and privacy. The
   version and build number sit at the bottom

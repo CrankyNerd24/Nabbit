@@ -92,11 +92,12 @@ struct HelpView: View {
 
     private func answer<Extra: View>(_ question: String, _ text: String,
                                      @ViewBuilder extra: () -> Extra) -> some View {
-        DisclosureGroup(question) {
+        let extraView = extra()
+        return DisclosureGroup(question) {
             VStack(alignment: .leading, spacing: 8) {
                 Text(text)
                     .foregroundStyle(.secondary)
-                extra()
+                extraView
             }
             .padding(.vertical, 4)
         }

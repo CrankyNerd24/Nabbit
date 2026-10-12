@@ -61,7 +61,7 @@ final class SpeechListener {
             state = .listening
 
             task = Self.recognize(with: recognizer, request: request) { [weak self] text, done in
-                Task { @MainActor in self?.heard(text, done: done) }
+                Task { @MainActor [weak self] in self?.heard(text, done: done) }
             }
             restartSilenceTimer(after: Self.waitForSpeech)
             limitTimer = Task { [weak self] in

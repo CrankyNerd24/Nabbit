@@ -5,7 +5,7 @@ import Foundation
 /// Crosses between devices as JSON `Data`, decoded on the main actor.
 struct WatchSnapshot: Codable, Equatable {
     /// The key for the encoded snapshot in the application context and in `UserDefaults.nabbit`.
-    static let key = "watchSnapshot"
+    nonisolated static let key = "watchSnapshot"
 
     struct Note: Codable, Equatable, Identifiable {
         let id: UUID
@@ -72,7 +72,7 @@ struct WatchSnapshot: Codable, Equatable {
 
     /// The last snapshot saved on this device.
     static var saved: WatchSnapshot {
-        UserDefaults.nabbit.data(forKey: key).flatMap(WatchSnapshot.init(data:)) ?? WatchSnapshot()
+        UserDefaults.nabbit.data(forKey: key).flatMap { WatchSnapshot(data: $0) } ?? WatchSnapshot()
     }
 
     /// Saves the snapshot, plus the settings `WhenPreset` and `NudgeTiming` read, so the
