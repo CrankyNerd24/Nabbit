@@ -5,6 +5,8 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+- Share the Nabbit and NabbitWatch schemes
+
 - Wins today starts fresh every day, even if Nabbit stays open past
   midnight, and always shows everything finished today, including
   things that were due long ago
