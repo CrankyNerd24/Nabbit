@@ -93,7 +93,7 @@ your devices (your iPhone and, if you use it, your Apple Watch) and are never se
 to us or anyone else. There's no account, no analytics, no ads, and no tracking.
 Speech for the mic is transcribed on your device. When you unlock the Salty or
 Sweary tone, Apple's age-range sharing tells Nabbit only whether you're over 16 or
-18; that answer stays on your device. Questions: [your email].
+18; that answer stays on your device. Questions: crankynerdcustoms@gmail.com.
 
 ## App Privacy (nutrition labels)
 
