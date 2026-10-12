@@ -5,6 +5,10 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+- Add a Sweary tone next to Plain, Sassy, and Salty, for full swearing:
+  "Call Dentist. Right fucking now." Still aimed at the task, never at
+  you
+
 - Home now opens on the mic and the verb notes, with Today and Coming up
   right below them, then Again? and Wins today
 

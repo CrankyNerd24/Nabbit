@@ -1,10 +1,10 @@
 import Foundation
 
-/// How Nabbit talks. Plain is the brief's voice; Sassy and Salty turn it up.
+/// How Nabbit talks. Plain is the brief's voice; Sassy, Salty, and Sweary turn it up.
 /// Whatever the tone, the swearing is at the task, never at the person, and there's
 /// still no guilt.
 enum Tone: String, CaseIterable, Identifiable {
-    case plain, sassy, salty
+    case plain, sassy, salty, sweary
 
     static let storageKey = "tone"
 
@@ -15,6 +15,7 @@ enum Tone: String, CaseIterable, Identifiable {
         case .plain: "Plain"
         case .sassy: "Sassy"
         case .salty: "Salty"
+        case .sweary: "Sweary"
         }
     }
 
@@ -24,6 +25,7 @@ enum Tone: String, CaseIterable, Identifiable {
         case .plain: "\u{201C}Still here. Dentist. Go.\u{201D}"
         case .sassy: "\u{201C}Still here. Dentist. I'm not going anywhere.\u{201D}"
         case .salty: "\u{201C}Still here. Dentist. Let's knock this crap out.\u{201D} Mild swearing."
+        case .sweary: "\u{201C}Still here. Dentist. Let's get this shit done.\u{201D} Full swearing."
         }
     }
 
@@ -64,6 +66,13 @@ enum Copy {
             case 2: return "Still here. \(thing). Let's knock this crap out."
             default: return "Last one. Do the damn thing or push it to tonight. No judgment."
             }
+        case .sweary:
+            switch step {
+            case 0: return "Hey. It's fucking time."
+            case 1: return "\(text). Right fucking now."
+            case 2: return "Still here. \(thing). Let's get this shit done."
+            default: return "Last one. Do the fucking thing or push it to tonight. No judgment."
+            }
         }
     }
 
@@ -74,6 +83,7 @@ enum Copy {
         case .plain: "First try. Look at you."
         case .sassy: "First try? Who even are you?"
         case .salty: "First damn try. Look at you."
+        case .sweary: "First fucking try. Look at you."
         }
     }
 
@@ -82,6 +92,7 @@ enum Copy {
         case .plain: "Finally handled. That one's been hanging around."
         case .sassy: "Finally. That one was getting way too comfy."
         case .salty: "Finally handled. That one was a pain in the ass."
+        case .sweary: "Finally fucking handled. That one was a pain in the ass."
         }
     }
 
@@ -90,6 +101,7 @@ enum Copy {
         case .plain: "Clear board. Nothing left today."
         case .sassy: "Clear board. Go be fabulous."
         case .salty: "Clear board. Nothing left. Hell yes."
+        case .sweary: "Clear board. Fuck yes. Nothing left."
         }
     }
 
@@ -115,6 +127,12 @@ enum Copy {
              "That's one less damn thing.", "Boom. Done. Hell yes.", "Handled like a damn pro.",
              "That crap's done.", "Smashed it.", "Done and damn well dusted.", "Hell of a job.",
              "Off the damn list.", "Damn fine work.", "Took care of that crap.", "Hell, that was easy."]
+        case .sweary:
+            ["Fuck yes. Handled.", "Done. Hell fucking yes.", "Knocked that shit out.", "Done. Absolute badass.",
+             "That shit's handled.", "Fuck yeah, crossed off.", "Kicked its fucking ass.", "Holy shit, look at you.",
+             "One less fucking thing.", "Boom. Fucking done.", "Handled like a goddamn pro.",
+             "Smashed the shit out of it.", "Done and fucking dusted.", "Fucking legend.",
+             "Off the damn list. Fuck yes.", "Shit got done.", "Hell of a fucking job.", "That was easy as shit."]
         }
     }
 
@@ -129,6 +147,7 @@ enum Copy {
         case .plain: "Got it. \(text), \(when)."
         case .sassy: "Locked in. \(text), \(when)."
         case .salty: "Hell yes. \(text), \(when)."
+        case .sweary: "Fuck yes. \(text), \(when)."
         }
     }
 
@@ -138,6 +157,7 @@ enum Copy {
         case .plain: "\(thing) moved to \(when)."
         case .sassy: "\(thing) bumped to \(when). Fine."
         case .salty: "\(thing) pushed to \(when). Damn it, fine."
+        case .sweary: "\(thing) pushed to \(when). Fine. Fucking fine."
         }
     }
 
@@ -146,6 +166,7 @@ enum Copy {
         case .plain: "\(thing) reminder's gone."
         case .sassy: "\(thing)? Never heard of it."
         case .salty: "\(thing) reminder's gone. To hell with it."
+        case .sweary: "\(thing) reminder's gone. Fuck it."
         }
     }
 
@@ -154,6 +175,7 @@ enum Copy {
         case .plain: "Missed that. Say it like this: call the dentist tomorrow."
         case .sassy: "Say what? Try it like this: call the dentist tomorrow."
         case .salty: "What the hell was that? Try: call the dentist tomorrow."
+        case .sweary: "What the fuck was that? Try: call the dentist tomorrow."
         }
     }
 
@@ -162,6 +184,7 @@ enum Copy {
         case .plain: "You've added \(text) \(count) times. Want a hot key for it?"
         case .sassy: "\(text), \(count) times now. A hot key, maybe? Just saying."
         case .salty: "\(text), \(count) damn times. Want a hot key?"
+        case .sweary: "\(text), \(count) fucking times. Want a hot key?"
         }
     }
 
@@ -172,6 +195,7 @@ enum Copy {
         case .plain: prompt
         case .sassy: "\(prompt) Spill."
         case .salty: prompt.replacingOccurrences(of: "?", with: " the hell?")
+        case .sweary: prompt.replacingOccurrences(of: "?", with: " the fuck?")
         }
     }
 }
