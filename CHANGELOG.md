@@ -5,6 +5,10 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [1.0.1] - 2026-10-12
+
+- Same app as 1.0.0, under a new version number
+
 ## [1.0.0] - 2026-10-12
 
 - Wins today starts fresh every day, even if Nabbit stays open past
