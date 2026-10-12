@@ -8,6 +8,7 @@ struct ThingStepView: View {
     let onPick: (String) -> Void
 
     @Environment(\.modelContext) private var context
+    @Environment(\.dynamicTypeSize) private var typeSize
     @Query private var things: [Thing]
     @State private var addingNew = false
     @State private var newName = ""
@@ -23,7 +24,7 @@ struct ThingStepView: View {
 
     var body: some View {
         ScrollView {
-            LazyVGrid(columns: NoteGrid.columns, spacing: 12) {
+            LazyVGrid(columns: NoteGrid.columns(for: typeSize), spacing: 12) {
                 ForEach(things) { thing in
                     Button {
                         onPick(thing.name)
@@ -38,6 +39,7 @@ struct ThingStepView: View {
                 } label: {
                     StickyNote(text: "+ New", fill: theme.tap2)
                 }
+                .accessibilityLabel("Add new")
                 .buttonStyle(NoteButtonStyle())
             }
             .padding()

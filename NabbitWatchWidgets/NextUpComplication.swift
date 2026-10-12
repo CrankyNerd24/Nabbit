@@ -97,7 +97,7 @@ struct ComplicationView: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text(slipped ? "Slipped" : "Next up")
                     .font(.headline)
-                    .foregroundStyle(entry.theme.tap1.color)
+                    .foregroundStyle(labelColor)
                     .widgetAccentable()
                 if let next = entry.next {
                     Text(next.text)
@@ -113,6 +113,12 @@ struct ComplicationView: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
         }
+    }
+
+    /// The theme's first color when it reads on a black watch face, else the paper white.
+    private var labelColor: Color {
+        let tap1 = entry.theme.tap1
+        return tap1.contrast(with: ThemeColor(hex: 0x000000)) >= 4.5 ? tap1.color : ThemeColor.paper.color
     }
 
     private func time(_ note: WatchSnapshot.Note) -> String {

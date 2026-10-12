@@ -48,6 +48,7 @@ struct WatchHomeView: View {
             NavigationLink(value: WatchRoute.verbs) {
                 NoteLabel(text: "+ New", fill: theme.tap1, large: true)
             }
+            .accessibilityLabel("New reminder")
             .listRowBackground(theme.tap1.color.clipShape(.rect(cornerRadius: 10)))
 
             if !model.snapshot.hotKeys.isEmpty {
@@ -157,6 +158,7 @@ struct NoteLabel: View {
 struct Banner: View {
     let text: String
     let fill: ThemeColor
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         Text(text)
@@ -167,7 +169,7 @@ struct Banner: View {
             .frame(maxWidth: .infinity)
             .background(fill.color, in: .rect(cornerRadius: 12))
             .padding(.horizontal, 4)
-            .transition(.scale(scale: 0.6).combined(with: .opacity))
+            .transition(reduceMotion ? .opacity : .scale(scale: 0.6).combined(with: .opacity))
             .allowsHitTesting(false)
     }
 }

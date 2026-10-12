@@ -12,6 +12,7 @@ struct NoteAlertView: View {
         ScrollView {
             VStack(spacing: 8) {
                 Text(note.text)
+                    .accessibilityAddTraits(.isHeader)
                     .font(.title2.bold())
                     .multilineTextAlignment(.center)
                     .minimumScaleFactor(0.6)
@@ -38,5 +39,11 @@ struct NoteAlertView: View {
         }
         .buttonStyle(.plain)
         .background(fill.color, in: .rect(cornerRadius: 10))
+        .overlay {
+            // Outlined when the button color sits too close to the alert color.
+            if fill.contrast(with: theme.alert) < 3 {
+                RoundedRectangle(cornerRadius: 10).stroke(theme.alert.text.color, lineWidth: 2)
+            }
+        }
     }
 }

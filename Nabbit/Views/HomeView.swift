@@ -1,3 +1,4 @@
+import Accessibility
 import AppIntents
 import SwiftData
 import SwiftUI
@@ -6,6 +7,9 @@ struct HomeView: View {
     @AppStorage(Theme.storageKey, store: .nabbit) private var themeID = Theme.standard.id
     @AppStorage(VerbStore.key, store: .nabbit) private var verbLayoutJSON = ""
     @Environment(\.modelContext) private var context
+    @Environment(\.dynamicTypeSize) private var typeSize
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.accessibilityVoiceOverEnabled) private var voiceOver
     @Query(filter: #Predicate<Reminder> { $0.completedAt == nil }, sort: \Reminder.dueDate, animation: .snappy)
     private var open: [Reminder]
     @Query(HomeView.recentlyDone) private var recentlyDone: [Reminder]
@@ -57,7 +61,7 @@ struct HomeView: View {
                     MicButton(theme: theme,
                               hints: verbs.map(\.title) + things.map(\.name),
                               onHeard: heard)
-                    LazyVGrid(columns: NoteGrid.columns, spacing: 12) {
+                    LazyVGrid(columns: NoteGrid.columns(for: typeSize), spacing: 12) {
                         ForEach(verbs) { verb in
                             Button {
                                 path.append(.thing(verb))
@@ -79,6 +83,15 @@ struct HomeView: View {
                                     editingVerbs = true
                                 }
                             }
+                            // The press-and-hold menu, as VoiceOver and Voice Control actions.
+                            .accessibilityAction(named: verb.isBuiltIn ? "Hide" : "Remove") {
+                                if verb.isBuiltIn {
+                                    VerbStore.setHidden(true, for: verb)
+                                } else {
+                                    VerbStore.remove(verb)
+                                }
+                            }
+                            .accessibilityAction(named: "Edit verbs") { editingVerbs = true }
                         }
                         Button {
                             newVerb = ""
@@ -87,6 +100,7 @@ struct HomeView: View {
                             StickyNote(text: "+ New", fill: theme.tap1)
                         }
                         .buttonStyle(NoteButtonStyle())
+                        .accessibilityLabel("Add a verb")
                     }
                     .alert("New verb", isPresented: $addingVerb) {
                         TextField("Text, Clean, Water…", text: $newVerb)
@@ -115,7 +129,7 @@ struct HomeView: View {
                               onAction: { act($1, on: $0) }, onRemove: remove)
                     if let offer = hotKeyOffer {
                         hotKeyCallout(offer)
-                            .transition(.opacity.combined(with: .move(edge: .top)))
+                            .transition(reduceMotion ? .opacity : .opacity.combined(with: .move(edge: .top)))
                     }
                     if !hotKeys.isEmpty {
                         againStrip
@@ -168,8 +182,25 @@ struct HomeView: View {
             }
             .task(id: banner?.id) {
                 guard let banner else { return }
-                try? await Task.sleep(for: .seconds(banner.undo == nil ? 2.5 : 4))
+                // VoiceOver reads the banner out and gets longer to reach Undo, which is
+                // also on a two-finger double tap (the Magic Tap).
+                if voiceOver {
+                    let undoHint = banner.undo == nil ? "" : " Double-tap with two fingers to undo."
+                    AccessibilityNotification.Announcement(banner.text + undoHint).post()
+                }
+                let seconds = switch (voiceOver, banner.undo == nil) {
+                case (false, true): 2.5
+                case (false, false): 4.0
+                case (true, true): 5.0
+                case (true, false): 10.0
+                }
+                try? await Task.sleep(for: .seconds(seconds))
                 withAnimation { self.banner = nil }
+            }
+            .accessibilityAction(.magicTap) {
+                guard let undo = banner?.undo else { return }
+                undo()
+                withAnimation { banner = nil }
             }
             .sheet(isPresented: $showingSettings) {
                 SettingsView()
@@ -296,6 +327,10 @@ struct HomeView: View {
                             StickyNote(text: "\(thing.verb.title) \(thing.name)", fill: theme.tap2, compact: true)
                         }
                         .buttonStyle(NoteButtonStyle())
+                        .accessibilityAction(named: "Remove hot key") {
+                            withAnimation { thing.hotKey = false }
+                            try? context.save()
+                        }
                         .contextMenu {
                             Button("Remove hot key", systemImage: "minus.circle") {
                                 withAnimation { thing.hotKey = false }
@@ -360,11 +395,13 @@ struct HomeView: View {
                     ForEach(Array(winsToday.enumerated()), id: \.element.id) { index, reminder in
                         Text(reminder.text)
                             .font(.caption.weight(.semibold))
-                            .lineLimit(2)
+                            .lineLimit(typeSize.isAccessibilitySize ? nil : 2)
                             .multilineTextAlignment(.center)
                             .foregroundStyle(theme.done.text.color)
                             .padding(8)
-                            .frame(width: 90, height: 54)
+                            .frame(width: typeSize.isAccessibilitySize ? nil : 90,
+                                   height: typeSize.isAccessibilitySize ? nil : 54)
+                            .frame(minWidth: 90, minHeight: 54)
                             .background(theme.done.color.opacity(0.85), in: .rect(cornerRadius: 4))
                             .rotationEffect(.degrees(index.isMultiple(of: 2) ? -4 : 3))
                     }
@@ -382,9 +419,13 @@ struct HomeView: View {
                 .font(.headline)
                 .frame(maxWidth: .infinity, alignment: banner.undo == nil ? .center : .leading)
             if let undo = banner.undo {
-                Button("Undo") {
+                Button {
                     undo()
                     withAnimation { self.banner = nil }
+                } label: {
+                    Text("Undo")
+                        .frame(minWidth: 44, minHeight: 44)
+                        .contentShape(.rect)
                 }
                 .font(.headline.weight(.heavy))
             }
@@ -395,7 +436,7 @@ struct HomeView: View {
         .background(theme.done.color, in: .rect(cornerRadius: 12))
         .shadow(color: .black.opacity(0.15), radius: 4, y: 2)
         .padding()
-        .transition(.move(edge: .bottom).combined(with: .opacity))
+        .transition(reduceMotion ? .opacity : .move(edge: .bottom).combined(with: .opacity))
         .onTapGesture { withAnimation { self.banner = nil } }
     }
 }

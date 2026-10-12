@@ -5,6 +5,13 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+- Better with VoiceOver, Voice Control, and large text: 15 min, Tonight,
+  Remove, Hide, and Remove hot key are actions, not just press-and-hold
+  menus; banners are read out and stay up longer, and a two-finger
+  double tap undoes; notes grow to fit the biggest text sizes; Reduce
+  Motion covers banners too; and the watch complication stays readable
+  in every theme
+
 - Fix the Help build error and concurrency warnings for archiving
 
 - Settings has Help and FAQ now: quick answers about making reminders,

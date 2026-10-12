@@ -10,6 +10,7 @@ struct WhenStepView: View {
     let onSaved: (String) -> Void
 
     @Environment(\.modelContext) private var context
+    @Environment(\.dynamicTypeSize) private var typeSize
     @State private var pickingDay = false
     @State private var pickedDay = Date.now
 
@@ -21,7 +22,7 @@ struct WhenStepView: View {
                     .multilineTextAlignment(.center)
                     .frame(maxWidth: .infinity)
 
-                LazyVGrid(columns: NoteGrid.columns, spacing: 12) {
+                LazyVGrid(columns: NoteGrid.columns(for: typeSize), spacing: 12) {
                     ForEach(WhenPreset.allCases) { preset in
                         Button {
                             choose(preset)

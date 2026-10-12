@@ -1,3 +1,4 @@
+import Accessibility
 import Foundation
 import Observation
 import WatchKit
@@ -90,6 +91,8 @@ final class WatchModel {
 
     private func flash(_ keyPath: ReferenceWritableKeyPath<WatchModel, String?>, _ line: String) {
         self[keyPath: keyPath] = line
+        // VoiceOver reads the line, since it's only on screen for a moment.
+        AccessibilityNotification.Announcement(line).post()
         Task {
             try? await Task.sleep(for: .seconds(1.4))
             if self[keyPath: keyPath] == line {

@@ -69,6 +69,10 @@ struct TodayList: View {
         .buttonStyle(NoteButtonStyle())
         .transition(reduceMotion ? .opacity : .peel)
         .accessibilityHint("Marks it done")
+        // The press-and-hold menu, as VoiceOver and Voice Control actions.
+        .accessibilityAction(named: ReminderAction.snooze15.title) { onAction(reminder, .snooze15) }
+        .accessibilityAction(named: ReminderAction.tonight.title) { onAction(reminder, .tonight) }
+        .accessibilityAction(named: "Remove") { onRemove(reminder) }
         .contextMenu {
             Button(ReminderAction.snooze15.title, systemImage: "clock") { onAction(reminder, .snooze15) }
             Button(ReminderAction.tonight.title, systemImage: "moon") { onAction(reminder, .tonight) }

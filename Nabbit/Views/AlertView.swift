@@ -15,6 +15,9 @@ struct AlertView: View {
                 .minimumScaleFactor(0.4)
                 .lineLimit(3)
                 .multilineTextAlignment(.center)
+                // VoiceOver lands on the task first when the alert opens.
+                .accessibilityAddTraits(.isHeader)
+                .accessibilitySortPriority(1)
             Text(Nudges.body(for: reminder, step: Nudges.step(for: reminder)))
                 .font(.title3.weight(.semibold))
                 .multilineTextAlignment(.center)
@@ -28,6 +31,12 @@ struct AlertView: View {
                     .foregroundStyle(theme.done.text.color)
                     .frame(maxWidth: .infinity, minHeight: 80)
                     .background(theme.done.color, in: .rect(cornerRadius: 16))
+                    .overlay {
+                        // Outlined when the Done color sits too close to the alert color.
+                        if theme.done.contrast(with: theme.alert) < 3 {
+                            RoundedRectangle(cornerRadius: 16).stroke(theme.alert.text.color, lineWidth: 3)
+                        }
+                    }
             }
             .buttonStyle(NoteButtonStyle())
 

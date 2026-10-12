@@ -40,6 +40,7 @@ struct ThingStep: View {
                 .listRowBackground(theme.tap2.color.clipShape(.rect(cornerRadius: 10)))
             }
             TextField("+ New", text: $newName)
+                .accessibilityLabel("Add new")
                 .onSubmit {
                     let name = newName.trimmingCharacters(in: .whitespacesAndNewlines)
                     guard !name.isEmpty else { return }
