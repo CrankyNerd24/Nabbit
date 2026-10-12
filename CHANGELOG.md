@@ -5,6 +5,9 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+- Nabbit has an icon: a sticky note with bunny ears and a big check, on
+  the iPhone (with dark and tinted versions) and the watch
+
 - Pick a day works on the watch too: choose any of the next two weeks
   and the reminder lands that morning at your usual time
 
