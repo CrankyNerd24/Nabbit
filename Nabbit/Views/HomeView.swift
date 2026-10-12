@@ -1,4 +1,6 @@
 import AppIntents
+import Combine
+import Foundation
 import SwiftData
 import SwiftUI
 
@@ -19,21 +21,26 @@ struct HomeView: View {
     @State private var addingVerb = false
     @State private var newVerb = ""
     @State private var editingVerbs = false
+    /// The start of today. Moves at midnight, and whenever the app comes back,
+    /// so Wins today starts empty each day even if Nabbit stayed open.
+    @State private var today = Calendar.current.startOfDay(for: .now)
+    @Environment(\.scenePhase) private var scenePhase
 
     private var theme: Theme { Theme.named(themeID) }
     private var verbs: [Verb] { VerbStore.visible(in: VerbStore.layout(from: verbLayoutJSON)) }
 
     private static var recentlyDone: FetchDescriptor<Reminder> {
+        // Newest finished first, so today's wins are always in the batch even when
+        // they were due long ago.
         var descriptor = FetchDescriptor<Reminder>(predicate: #Predicate { $0.completedAt != nil },
-                                                   sortBy: [SortDescriptor(\.dueDate, order: .reverse)])
+                                                   sortBy: [SortDescriptor(\.completedAt, order: .reverse)])
         descriptor.fetchLimit = 40
         return descriptor
     }
 
     /// Finished today, newest first. No counts, no streaks.
     private var winsToday: [Reminder] {
-        let today = Calendar.current.startOfDay(for: .now)
-        return recentlyDone
+        recentlyDone
             .filter { ($0.completedAt ?? .distantPast) >= today }
             .sorted { ($0.completedAt ?? .distantPast) > ($1.completedAt ?? .distantPast) }
     }
@@ -207,6 +214,13 @@ struct HomeView: View {
             .task {
                 Thing.seedIfNeeded(in: context)
             }
+            .onReceive(NotificationCenter.default.publisher(for: .NSCalendarDayChanged)
+                        .receive(on: DispatchQueue.main)) { _ in
+                refreshToday()
+            }
+            .onChange(of: scenePhase) {
+                if scenePhase == .active { refreshToday() }
+            }
         }
     }
 
@@ -257,6 +271,11 @@ struct HomeView: View {
                 Nudges.shared.saveAndReschedule()
             })
         }
+    }
+
+    private func refreshToday() {
+        let start = Calendar.current.startOfDay(for: .now)
+        if start != today { today = start }
     }
 
     /// True when this was the last thing due today.

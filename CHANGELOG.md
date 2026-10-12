@@ -5,6 +5,10 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+- Wins today starts fresh every day, even if Nabbit stays open past
+  midnight, and always shows everything finished today, including
+  things that were due long ago
+
 - Fix the Help build error and concurrency warnings for archiving
 
 - Settings has Help and FAQ now: quick answers about making reminders,
