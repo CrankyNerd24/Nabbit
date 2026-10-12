@@ -84,6 +84,7 @@ struct SettingsView: View {
             }
             .onChange(of: themeID) {
                 WidgetCenter.shared.reloadAllTimelines()
+                WatchLink.shared.send()
             }
             .navigationTitle("Settings")
             .navigationBarTitleDisplayMode(.inline)

@@ -13,9 +13,9 @@ final class Nudges: NSObject, UNUserNotificationCenterDelegate {
     /// iOS keeps at most 64 pending notifications per app. The soonest ones are
     /// scheduled and the rest are added as the app reopens.
     private static let pendingLimit = 60
-    private static let categoryID = "reminder"
+    private static let categoryID = ReminderAction.notificationCategory
     /// Read from the nonisolated delegate callbacks.
-    nonisolated private static let reminderKey = "reminder"
+    nonisolated private static let reminderKey = ReminderAction.reminderKey
 
     private var container: ModelContainer { Store.container }
     private var alarmTask: Task<Void, Never>?
@@ -105,6 +105,7 @@ final class Nudges: NSObject, UNUserNotificationCenterDelegate {
         // Lets Siri match phrases like "done with dentist" against current reminders.
         NabbitShortcuts.updateAppShortcutParameters()
         WidgetCenter.shared.reloadAllTimelines()
+        WatchLink.shared.send()
 
         let center = UNUserNotificationCenter.current()
         center.removeAllPendingNotificationRequests()

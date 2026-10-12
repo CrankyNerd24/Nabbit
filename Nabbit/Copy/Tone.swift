@@ -144,12 +144,16 @@ enum Copy {
     // MARK: Banners and prompts
 
     static func saved(_ text: String, due: Date) -> String {
-        let when = due.dueDescription()
-        return switch tone {
-        case .plain: "Got it. \(text), \(when)."
-        case .sassy: "Locked in. \(text), \(when)."
-        case .salty: "Hell yes. \(text), \(when)."
-        case .sweary: "Fuck yes. \(text), \(when)."
+        "\(savedLead) \(text), \(due.dueDescription())."
+    }
+
+    /// The first words of `saved`, also shown on the watch.
+    static var savedLead: String {
+        switch tone {
+        case .plain: "Got it."
+        case .sassy: "Locked in."
+        case .salty: "Hell yes."
+        case .sweary: "Fuck yes."
         }
     }
 

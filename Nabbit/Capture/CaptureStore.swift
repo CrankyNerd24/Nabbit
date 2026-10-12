@@ -1,11 +1,14 @@
 import Foundation
 import SwiftData
 
-/// Saving a reminder, shared by the three-tap flow and the mic.
+/// Saving a reminder, shared by the three-tap flow, the mic, and the watch.
 enum CaptureStore {
+    /// `id` is set by the watch, which shows the reminder before the iPhone has it.
     @discardableResult
-    static func save(verb: Verb, thing: String, due: Date, in context: ModelContext) -> Reminder {
+    static func save(verb: Verb, thing: String, due: Date, id: UUID = UUID(),
+                     in context: ModelContext) -> Reminder {
         let reminder = Reminder(verb: verb, thing: thing, dueDate: due)
+        reminder.uuid = id
         context.insert(reminder)
         things(for: verb, in: context).first { $0.name == thing }?.markUsed()
         try? context.save()

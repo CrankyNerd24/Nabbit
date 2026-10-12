@@ -13,6 +13,7 @@ struct NabbitApp: App {
         UNUserNotificationCenter.current().delegate = Nudges.shared
         Nudges.registerCategories()
         NabbitShortcuts.updateAppShortcutParameters()
+        WatchLink.shared.activate()
     }
 
     var body: some Scene {
@@ -29,6 +30,9 @@ struct NabbitApp: App {
             if scenePhase == .active {
                 Nudges.shared.reschedule()
                 Nudges.shared.showDueAlert()
+            } else if scenePhase == .background {
+                // Catches settings and hot keys changed since the last send.
+                WatchLink.shared.send()
             }
         }
     }

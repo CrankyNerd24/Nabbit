@@ -5,6 +5,12 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+- Nabbit on Apple Watch: see Today and Coming up, tap a note for Done,
+  15 min, or Tonight, and make a new reminder in three taps from your
+  wrist. Hot keys come along, and a Next up complication shows what's
+  next on your watch face. Taps on the watch reach your iPhone as soon
+  as it's nearby
+
 - Salty unlocks at 16 and Sweary at 18. Tapping one asks to see your age
   range once, through Apple's age-sharing sheet; if you'd rather not
   share, they stay locked and Plain and Sassy work as always

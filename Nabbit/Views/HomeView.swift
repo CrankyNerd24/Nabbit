@@ -197,6 +197,7 @@ struct HomeView: View {
             .onChange(of: verbLayoutJSON) {
                 // Lets Siri hear added verbs in "Remind me in Nabbit to …".
                 NabbitShortcuts.updateAppShortcutParameters()
+                WatchLink.shared.send()
             }
             .onChange(of: capture.count) {
                 // The New reminder control: back to the verb grid.
