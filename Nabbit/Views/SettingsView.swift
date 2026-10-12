@@ -1,4 +1,5 @@
 import DeclaredAgeRange
+import StoreKit
 import SwiftData
 import SwiftUI
 import WidgetKit
@@ -12,6 +13,8 @@ struct SettingsView: View {
     @AppStorage(AgeGate.floorKey, store: .nabbit) private var ageFloor = 0
     @Environment(\.requestAgeRange) private var requestAgeRange
     @State private var gateNote: String?
+    /// Debug and TestFlight builds show the Testing section and 1-minute nudges.
+    @State private var isTestBuild = false
     @AppStorage(NudgeTiming.intervalKey, store: .nabbit) private var nudgeMinutes = NudgeTiming.defaultMinutes
     @Environment(\.modelContext) private var context
     @Environment(\.dismiss) private var dismiss
@@ -69,19 +72,32 @@ struct SettingsView: View {
                     Text("If it's not done, Nabbit nudges you \(NudgeTiming.count) more times, then goes quiet.")
                 }
 
-                #if DEBUG
-                Section("Testing") {
-                    Button("Alert in 10 seconds") {
-                        context.insert(Reminder(verb: .call, thing: "Dentist", dueDate: .now.addingTimeInterval(10)))
-                        try? context.save()
-                        Task {
-                            await Nudges.requestPermission()
-                            Nudges.shared.reschedule()
+                Section {
+                    NavigationLink("Help and FAQ") {
+                        HelpView()
+                    }
+                }
+
+                if isTestBuild {
+                    Section("Testing") {
+                        Button("Alert in 10 seconds") {
+                            context.insert(Reminder(verb: .call, thing: "Dentist", dueDate: .now.addingTimeInterval(10)))
+                            try? context.save()
+                            Task {
+                                await Nudges.requestPermission()
+                                Nudges.shared.reschedule()
+                            }
                         }
                     }
                 }
-                #endif
+
+                Section {
+                } footer: {
+                    Text(versionLine)
+                        .frame(maxWidth: .infinity)
+                }
             }
+            .task { isTestBuild = await Self.checkTestBuild() }
             .onChange(of: themeID) {
                 WidgetCenter.shared.reloadAllTimelines()
                 WatchLink.shared.send()
@@ -147,10 +163,28 @@ struct SettingsView: View {
     }
 
     private var nudgeChoices: [Int] {
+        isTestBuild ? [1, 5, 10, 15, 20, 30] : [5, 10, 15, 20, 30]
+    }
+
+    /// "Nabbit 1.0.0 (1)": the version and build number.
+    private var versionLine: String {
+        let info = Bundle.main.infoDictionary
+        let version = info?["CFBundleShortVersionString"] as? String ?? "?"
+        let build = info?["CFBundleVersion"] as? String ?? "?"
+        return "Nabbit \(version) (\(build))"
+    }
+
+    /// True when run from Xcode or installed through TestFlight; false from the App Store,
+    /// so testing tools never ship there.
+    private static func checkTestBuild() async -> Bool {
         #if DEBUG
-        return [1, 5, 10, 15, 20, 30]
+        return true
         #else
-        return [5, 10, 15, 20, 30]
+        guard let result = try? await AppTransaction.shared else { return false }
+        let environment = switch result {
+        case .verified(let transaction), .unverified(let transaction, _): transaction.environment
+        }
+        return environment != .production
         #endif
     }
 

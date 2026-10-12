@@ -5,6 +5,13 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+- Settings has Help and FAQ now: quick answers about making reminders,
+  alerts and nudges, Siri, widgets, the watch, tones, and privacy. The
+  version and build number sit at the bottom
+
+- TestFlight builds keep the 10-second test alert and 1-minute nudges
+  in Settings; App Store builds don't show them
+
 ## [1.0.0] - 2026-10-12
 
 - Add privacy manifests and the App Store listing for release
