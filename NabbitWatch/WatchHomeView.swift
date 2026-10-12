@@ -5,6 +5,7 @@ enum WatchRoute: Hashable {
     case verbs
     case things(verbRaw: String)
     case when(verbRaw: String, thing: String)
+    case day(verbRaw: String, thing: String)
     case note(UUID)
 }
 
@@ -103,6 +104,15 @@ struct WatchHomeView: View {
         case .when(let raw, let thing):
             if let verb = model.verb(raw) {
                 WhenStep(theme: theme, text: "\(verb.title) \(thing)") { due in
+                    model.create(verb: verb, thing: thing, due: due)
+                    path = []
+                } onPickDay: {
+                    path.append(.day(verbRaw: raw, thing: thing))
+                }
+            }
+        case .day(let raw, let thing):
+            if let verb = model.verb(raw) {
+                DayStep(theme: theme) { due in
                     model.create(verb: verb, thing: thing, due: due)
                     path = []
                 }

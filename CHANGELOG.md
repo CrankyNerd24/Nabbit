@@ -5,6 +5,9 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+- Pick a day works on the watch too: choose any of the next two weeks
+  and the reminder lands that morning at your usual time
+
 - The alarm's second button is now Done instead of Open, so you can
   finish a reminder right from the alarm, on your iPhone or your watch,
   without opening the app. Stop still just quiets it, and the nudges

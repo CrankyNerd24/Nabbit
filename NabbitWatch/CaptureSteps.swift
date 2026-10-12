@@ -51,20 +51,22 @@ struct ThingStep: View {
     }
 }
 
-/// Third tap: a when chip. Tapping one saves.
+/// Third tap: a when chip. Tapping one saves; Pick a day opens the next two weeks.
 struct WhenStep: View {
     let theme: Theme
     let text: String
     let onPick: (Date) -> Void
-
-    /// Pick a day needs a calendar, which is the iPhone's job.
-    private let presets = WhenPreset.allCases.filter { $0 != .pickDay }
+    let onPickDay: () -> Void
 
     var body: some View {
         List {
-            ForEach(presets) { preset in
+            ForEach(WhenPreset.allCases) { preset in
                 Button {
-                    if let date = preset.date() { onPick(date) }
+                    if let date = preset.date() {
+                        onPick(date)
+                    } else {
+                        onPickDay()
+                    }
                 } label: {
                     NoteLabel(text: preset.title, fill: theme.tap3, large: true)
                 }
@@ -72,5 +74,39 @@ struct WhenStep: View {
             }
         }
         .navigationTitle(text)
+    }
+}
+
+/// Pick a day: tomorrow through two weeks out, each at the morning time. Tapping one saves.
+struct DayStep: View {
+    let theme: Theme
+    let onPick: (Date) -> Void
+
+    private var days: [Date] {
+        let calendar = Calendar.current
+        let today = calendar.startOfDay(for: .now)
+        let hour = DefaultTimes.current.morningHour
+        return (1...14).compactMap { offset in
+            calendar.date(byAdding: .day, value: offset, to: today)
+                .flatMap { calendar.date(bySettingHour: hour, minute: 0, second: 0, of: $0) }
+        }
+    }
+
+    var body: some View {
+        List {
+            ForEach(days, id: \.self) { day in
+                Button { onPick(day) } label: {
+                    NoteLabel(text: title(for: day), fill: theme.tap3, large: true)
+                }
+                .listRowBackground(theme.tap3.color.clipShape(.rect(cornerRadius: 10)))
+            }
+        }
+        .navigationTitle("Pick a day")
+    }
+
+    private func title(for day: Date) -> String {
+        Calendar.current.isDateInTomorrow(day)
+            ? "Tomorrow"
+            : day.formatted(.dateTime.weekday(.wide).month(.abbreviated).day())
     }
 }
